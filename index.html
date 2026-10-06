@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -510,6 +511,7 @@
             margin-top: 15px;
             display: none;
             border-radius: 6px;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -539,7 +541,7 @@
     </div>
 
     <!-- Terminal Container -->
-    <div class="terminal-container">
+    <div class="terminal-container" onclick="document.getElementById('termInput').focus();">
         <div class="terminal-header">
             <div class="terminal-title">
                 <span>[💀]</span>
@@ -597,13 +599,13 @@
             <div class="details-header" id="detailsHeader">SUSPECT DOSSIER</div>
             <div id="detailsBody" style="line-height: 1.8; font-size: 1rem;"></div>
             <button class="overview-btn" id="overviewBtn" onclick="showImageOverview()">OVERVIEW</button>
-            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture"></center>
+            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture" onerror="handleImgError(this)"></center>
             <div style="margin-top: 15px; text-align: center;"><span style="color: var(--alert-red); cursor: pointer;" onclick="closeDetailsModal()">[CLOSE DOSSIER]</span></div>
         </div>
     </div>
 
     <script>
-        /* Database Profiles - Updated Locations and Ages */
+        /* Database Profiles */
         const PROFILES = {
             'suspect 1': { name: 'Daham', age: '18', location: 'Seeduwa', img: 'daham.jpg' },
             'suspect 2': { name: 'Seneth', age: '18', location: 'Seeduwa', img: 'seneth.jpg' },
@@ -614,9 +616,11 @@
         /* Matrix Background */
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight;
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
-        const fontSize = 14; const columns = Math.floor(canvas.width / fontSize);
+        const fontSize = 14; 
+        const columns = Math.floor(canvas.width / fontSize);
         const drops = Array(columns).fill(1);
 
         function drawMatrix() {
@@ -632,6 +636,11 @@
             }
         }
         setInterval(drawMatrix, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
 
         /* Login Verification */
         const passInput = document.getElementById('passInput');
@@ -670,28 +679,40 @@
 
         termInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const cmd = termInput.value.trim().toLowerCase();
-                appendLine(`DEAD_COUNTER@ANON-NODE:~$ ${termInput.value}`, 'prompt');
-                termInput.value = '';
-
-                if (cmd === 'clear') {
-                    termBody.innerHTML = '';
-                    return;
-                } else if (cmd === 'names') {
-                    renderWindowsFiles();
-                } else if (cmd in PROFILES) {
-                    openPasskeyModal(cmd);
-                } else if (cmd === 'scan net' || cmd === 'scan') {
-                    openGlobeWithTimer();
-                } else if (cmd === 'status') {
-                    showStatusPopup();
-                } else {
-                    appendLine(`Command not recognized: '${cmd}'`, 'alert-text');
+                const cmd = termInput.value.trim();
+                if (cmd !== '') {
+                    processCommand(cmd);
                 }
+                termInput.value = '';
             }
         });
 
-        /* Render Windows Explorer Style File Grid */
+        function processCommand(rawCmd) {
+            const cmd = rawCmd.trim().toLowerCase();
+            appendLine(`DEAD_COUNTER@ANON-NODE:~$ ${rawCmd}`, 'prompt');
+
+            if (cmd === 'clear') {
+                termBody.innerHTML = '';
+            } else if (cmd === 'names') {
+                renderWindowsFiles();
+            } else if (cmd in PROFILES) {
+                openPasskeyModal(cmd);
+            } else if (cmd === 'scan net' || cmd === 'scan') {
+                openGlobeWithTimer();
+            } else if (cmd === 'status') {
+                showStatusPopup();
+            } else {
+                appendLine(`Command not recognized: '${rawCmd}'`, 'alert-text');
+            }
+        }
+
+        /* Direct Quick Actions Runner */
+        function execQuick(cmd) {
+            processCommand(cmd);
+            termInput.focus();
+        }
+
+        /* Render File Grid */
         function renderWindowsFiles() {
             const filesHtml = `
                 <div class="output-line alert-text" style="font-weight: bold;">[!] SUSPECT DIRECTORY ACCESS GRANTED [!]</div>
@@ -717,7 +738,7 @@
             appendLine(filesHtml, 'system-text');
         }
 
-        /* Scan Net Globe Functionality with Auto-Disappear in 5 Seconds */
+        /* Scan Net Globe Functionality */
         function openGlobeWithTimer() {
             const panel = document.getElementById('globePanel');
             panel.classList.add('active');
@@ -774,7 +795,7 @@
             classifiedModal.style.display = 'none';
         }
 
-        /* Individual Profile Details Tab */
+        /* Profile Details Tab Modal */
         const detailsModal = document.getElementById('detailsModal');
         const detailsHeader = document.getElementById('detailsHeader');
         const detailsBody = document.getElementById('detailsBody');
@@ -801,18 +822,17 @@
             detailsModal.style.display = 'none';
         }
 
+        function handleImgError(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23050d18"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2300ff66" font-family="monospace" font-size="14">[NO IMAGE FOUND]</text></svg>';
+        }
+
         function appendLine(text, className = '') {
             const line = document.createElement('div');
             line.className = `output-line ${className}`;
             line.innerHTML = text;
             termBody.appendChild(line);
             termBody.scrollTop = termBody.scrollHeight;
-        }
-
-        function execQuick(cmd) {
-            termInput.value = cmd;
-            const event = new KeyboardEvent('keydown', { key: 'Enter' });
-            termInput.dispatchEvent(event);
         }
     </script>
 </body>
