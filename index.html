@@ -72,12 +72,12 @@
             backdrop-filter: blur(8px);
         }
 
-        /* Giant Skull Behind the Popup Card */
+        /* Giant Black and White Skull Behind Welcome Card */
         .bg-skull {
             position: absolute;
-            font-size: 38vw;
+            font-size: 42vw;
             color: #ffffff;
-            opacity: 0.08;
+            opacity: 0.12;
             filter: drop-shadow(0 0 30px #ffffff);
             pointer-events: none;
             z-index: 1;
@@ -86,8 +86,8 @@
         }
 
         @keyframes skullPulse {
-            0% { opacity: 0.05; transform: scale(0.98); }
-            100% { opacity: 0.12; transform: scale(1.02); }
+            0% { opacity: 0.08; transform: scale(0.98); }
+            100% { opacity: 0.16; transform: scale(1.02); }
         }
 
         .login-card {
@@ -178,7 +178,6 @@
         .accepted {
             color: var(--primary-green);
             text-shadow: 0 0 10px var(--primary-green);
-            animation: flash 0.5s infinite alternate;
         }
 
         .denied {
@@ -186,7 +185,7 @@
             text-shadow: 0 0 10px var(--alert-red);
         }
 
-        /* Massive Skull Flash Screen (Triggered on Correct Password) */
+        /* Post-Login Skull Flash Screen */
         #giantSkullScreen {
             display: none;
             position: fixed;
@@ -338,7 +337,7 @@
 
     <!-- Welcome / Login Modal -->
     <div class="modal-overlay" id="loginModal">
-        <!-- Giant Skull Background Behind Card -->
+        <!-- Huge Black and White Skull Face Behind Welcome Box -->
         <div class="bg-skull">💀</div>
 
         <!-- Popup Front Card -->
@@ -472,13 +471,13 @@
                 statusMsg.className = 'status-msg accepted';
                 statusMsg.innerText = 'ACCESS ACCEPTED';
 
-                // Fade out welcome modal & show huge skull popup
+                // Fade out modal and show huge skull popup
                 setTimeout(() => {
                     loginModal.style.display = 'none';
                     giantSkullScreen.style.display = 'flex';
                     playBeep(1200, 'sawtooth', 0.6);
 
-                    // Flash huge skull for 1.8 seconds before loading terminal
+                    // Flash huge skull then show terminal
                     setTimeout(() => {
                         giantSkullScreen.style.display = 'none';
                         document.getElementById('termInput').focus();
@@ -500,7 +499,13 @@
         const termInput = document.getElementById('termInput');
 
         const commands = {
-            'names': 'REGISTERED ANONYMOUS MEMBERS:<br>1. DEAD_COUNTER (SYSTEM ADMIN)<br>2. CYBER_GHOST<br>3. PHANTOM_OPERATOR<br>4. SHADOW_NET',
+            'names': `<span class="alert-text" style="font-size: 1.1rem; font-weight: bold;">[!] WANTED LIST [!]</span><br>` +
+                     `----------------------------------------<br>` +
+                     `<span class="accent-text">FILE #01:</span> Daham<br>` +
+                     `<span class="accent-text">FILE #02:</span> Senith<br>` +
+                     `<span class="accent-text">FILE #03:</span> Anuhas<br>` +
+                     `<span class="accent-text">FILE #04:</span> Suran<br>` +
+                     `----------------------------------------`,
             'status': 'SYSTEM: Anonymous Cyber Node | USER: DEAD_COUNTER | STATUS: ENCRYPTED',
             'scan': 'Scanning local subnet for vulnerable nodes... Found 12 active hosts.',
             'nuke': 'CRITICAL WARNING: LAUNCHING CYBER WARHEAD...',
