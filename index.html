@@ -2,506 +2,1440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANONYMOUS CYBER TERMINAL // DEAD COUNTER</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ANONYMOUS CYBER TERMINAL</title>
 
-    <style>
-        :root {
-            --bg-color: #050508;
-            --terminal-bg: rgba(10, 15, 24, 0.95);
-            --primary-green: #00ff66;
-            --accent-cyan: #00f3ff;
-            --alert-red: #ff0055;
-            --text-color: #a3f7bf;
-            --border-color: #00ff6644;
-            --font-mono: 'Courier New', Courier, monospace;
-        }
+<style>
+:root{
+  --g:#00ff66;
+  --r:#ff3030;
+  --c:#00eaff;
+  --y:#ffe600;
+  --bg:#020805;
+  --panel:rgba(0,12,7,.95);
+}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
+*{box-sizing:border-box}
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-mono);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:var(--bg);
+  color:var(--g);
+  font-family:Consolas,monospace;
+}
 
-        body::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background:
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-        }
+button,input{font:inherit}
 
-        #matrixCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.15;
-        }
+button{cursor:pointer}
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            backdrop-filter: blur(8px);
-        }
+#matrix{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:.17;
+  z-index:0;
+}
 
-        .bg-skull {
-            position: absolute;
-            font-size: 42vw;
-            color: #ffffff;
-            opacity: 0.12;
-            filter: drop-shadow(0 0 30px #ffffff);
-            pointer-events: none;
-            z-index: 1;
-            animation: skullPulse 4s infinite alternate ease-in-out;
-        }
+.scanlines{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:20;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(0,255,102,.025) 4px
+  );
+}
 
-        @keyframes skullPulse {
-            0% {
-                opacity: 0.08;
-                transform: scale(0.98);
-            }
+/* ---------- COMMON ---------- */
 
-            100% {
-                opacity: 0.16;
-                transform: scale(1.02);
-            }
-        }
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:30;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.92);
+}
 
-        .login-card {
-            background: rgba(8, 14, 12, 0.92);
-            border: 2px solid var(--primary-green);
-            box-shadow: 0 0 30px var(--primary-green);
-            padding: 40px 30px;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-            position: relative;
-            z-index: 2;
-        }
+.box{
+  width:min(92vw,560px);
+  border:1px solid var(--g);
+  background:var(--panel);
+  box-shadow:0 0 30px rgba(0,255,102,.18);
+  padding:28px;
+}
 
-        .welcome-title {
-            color: var(--primary-green);
-            font-size: 1.6rem;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            text-shadow: 0 0 8px var(--primary-green);
-        }
+h1,h2{
+  margin:0 0 16px;
+  text-shadow:0 0 12px var(--g);
+}
 
-        .welcome-sub {
-            color: #888;
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-        }
+.muted{opacity:.72}
+.red{color:var(--r)}
+.cyan{color:var(--c)}
+.yellow{color:var(--y)}
 
-        .login-btn {
-            background: transparent;
-            color: var(--primary-green);
-            border: 2px solid var(--primary-green);
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            font-family: var(--font-mono);
-            font-weight: bold;
-            cursor: pointer;
-            letter-spacing: 2px;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
+input{
+  width:100%;
+  padding:13px;
+  background:#000;
+  border:1px solid var(--g);
+  color:var(--g);
+  outline:none;
+  margin:10px 0 14px;
+}
 
-        .login-btn:hover {
-            background: var(--primary-green);
-            color: #000;
-            box-shadow: 0 0 20px var(--primary-green);
-        }
+.btn{
+  border:1px solid var(--g);
+  background:#001b0d;
+  color:var(--g);
+  padding:10px 14px;
+  margin:4px;
+}
 
-        .pass-input-group {
-            display: none;
-            margin-top: 20px;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
+.btn:hover{
+  background:#00351a;
+  box-shadow:0 0 14px rgba(0,255,102,.3);
+}
 
-        .pass-input {
-            background: #000;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            padding: 10px;
-            font-family: var(--font-mono);
-            font-size: 1.2rem;
-            text-align: center;
-            width: 200px;
-            letter-spacing: 5px;
-            border-radius: 4px;
-            outline: none;
-        }
+/* ---------- OVERRIDE ---------- */
 
-        .status-msg {
-            font-size: 1rem;
-            margin-top: 15px;
-            font-weight: bold;
-            min-height: 24px;
-        }
+#override{
+  display:none;
+  text-align:center;
+}
 
-        .accepted {
-            color: var(--primary-green);
-        }
+.skull{
+  font-size:clamp(100px,22vw,220px);
+  line-height:1;
+  text-shadow:0 0 35px var(--g);
+  animation:pulse 1.2s infinite alternate;
+}
 
-        .denied {
-            color: var(--alert-red);
-        }
+@keyframes pulse{
+  to{
+    filter:brightness(1.7);
+    transform:scale(1.02);
+  }
+}
 
-        #giantSkullScreen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
+/* ---------- TERMINAL ---------- */
 
-        .flash-skull {
-            font-size: 65vh;
-            color: #ffffff;
-            text-shadow: 0 0 50px #00ff66;
-            animation: skullFlicker 0.15s infinite alternate;
-        }
+#app{
+  display:none;
+  position:relative;
+  z-index:5;
+  height:100%;
+  padding:18px;
+}
 
-        @keyframes skullFlicker {
-            0% {
-                opacity: 0.8;
-            }
+header{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--g);
+  padding-bottom:10px;
+}
 
-            100% {
-                opacity: 1;
-                transform: scale(1.03);
-            }
-        }
+.brand{font-weight:bold}
+.status{color:var(--c)}
 
-        .terminal-container {
-            width: 90vw;
-            height: 85vh;
-            background: var(--terminal-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.2);
-            z-index: 5;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+.grid{
+  height:calc(100% - 62px);
+  display:grid;
+  grid-template-columns:1fr 300px;
+  gap:14px;
+  padding-top:14px;
+}
 
-        .terminal-header {
-            background: rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid var(--border-color);
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.panel{
+  border:1px solid rgba(0,255,102,.5);
+  background:rgba(0,8,4,.76);
+  padding:14px;
+  overflow:auto;
+}
 
-        .terminal-title {
-            color: var(--accent-cyan);
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+#terminal{
+  height:calc(100% - 60px);
+  overflow:auto;
+  white-space:pre-wrap;
+  line-height:1.5;
+}
 
-        .terminal-body {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 0.95rem;
-        }
+.line{margin-bottom:3px}
+.prompt{color:var(--c)}
 
-        .output-line {
-            line-height: 1.4;
-            word-break: break-all;
-            user-select: text;
-        }
+.quick{
+  margin-top:10px;
+}
 
-        .system-text {
-            color: #888;
-        }
+.network{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:180px;
+  border:1px dashed rgba(0,234,255,.5);
+  margin-bottom:14px;
+}
 
-        .accent-text {
-            color: var(--accent-cyan);
-        }
+.globe{
+  font-size:72px;
+  animation:spin 8s linear infinite;
+}
 
-        .success-text {
-            color: var(--primary-green);
-        }
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
 
-        .alert-text {
-            color: var(--alert-red);
-        }
+/* ---------- MODALS ---------- */
 
-        .files-grid {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:15;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.78);
+  padding:18px;
+}
 
-        .file-card {
-            background: rgba(0, 255, 102, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 15px;
-            width: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+.modal .box{
+  max-height:90vh;
+  overflow:auto;
+}
 
-        .file-card:hover {
-            background: rgba(0, 255, 102, 0.2);
-            border-color: var(--primary-green);
-            transform: translateY(-3px);
-            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
-        }
+.suspect{
+  border:1px solid rgba(0,255,102,.45);
+  padding:12px;
+  margin:8px 0;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
 
-        .file-icon {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-        }
+.suspect:hover{
+  background:rgba(0,255,102,.06);
+}
 
-        .file-name {
-            font-size: 0.85rem;
-            color: var(--accent-cyan);
-            text-align: center;
-            font-weight: bold;
-        }
+.dossier{
+  border:1px solid var(--r);
+  box-shadow:0 0 25px rgba(255,48,48,.12);
+}
 
-        .input-line {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 5px;
-        }
+.dossier h2{
+  color:var(--r);
+}
 
-        .prompt {
-            color: var(--primary-green);
-            font-weight: bold;
-            white-space: nowrap;
-        }
+/* IMPORTANT:
+   The suspect picture does NOT appear in the dossier.
+   It only appears in the OVERVIEW popup.
+*/
 
-        .term-input {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: var(--text-color);
-            font-family: var(--font-mono);
-            font-size: 1rem;
-            width: 100%;
-        }
+.overview-box{
+  width:min(94vw,650px);
+  max-height:90vh;
+  overflow:auto;
+  border:1px solid var(--c);
+  background:#010806;
+  box-shadow:0 0 35px rgba(0,234,255,.2);
+  padding:22px;
+}
 
-        .quick-actions {
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.6);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+.overview-title{
+  color:var(--c);
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
 
-        .action-btn {
-            background: rgba(0, 255, 102, 0.1);
-            border: 1px solid var(--primary-green);
-            color: var(--primary-green);
-            padding: 5px 12px;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            cursor: pointer;
-            border-radius: 3px;
-        }
+.analysis-img{
+  display:block;
+  width:min(100%,360px);
+  height:360px;
+  object-fit:cover;
+  margin:15px auto;
+  border:1px solid var(--c);
+  background:#000;
+}
 
-        .action-btn:hover {
-            background: var(--primary-green);
-            color: #000;
-        }
+.analysis-close{
+  border:1px solid var(--c);
+  background:#00151a;
+  color:var(--c);
+  padding:10px 15px;
+}
 
-        .globe-panel {
-            position: fixed;
-            top: 0;
-            right: -340px;
-            width: 320px;
-            height: 100vh;
-            background: rgba(5, 10, 18, 0.95);
-            backdrop-filter: blur(10px);
-            border-left: 2px solid var(--primary-green);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 150;
-        }
+.tag{
+  display:inline-block;
+  border:1px solid var(--r);
+  color:var(--r);
+  padding:4px 8px;
+  margin:5px 0;
+}
 
-        .globe-panel.active {
-            right: 0;
-        }
+@media(max-width:800px){
+  .grid{
+    grid-template-columns:1fr;
+  }
 
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: var(--alert-red);
-            font-size: 1.8rem;
-            cursor: pointer;
-        }
+  .panel.side{
+    display:none;
+  }
 
-        .globe-container {
-            width: 170px;
-            height: 170px;
-            border-radius: 50%;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 10px -10px 25px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 255, 102, 0.5);
-            background: #0284c7;
-            margin-bottom: 24px;
-        }
+  header{
+    font-size:13px;
+  }
 
-        .globe-map {
-            width: 200%;
-            height: 100%;
-            position: absolute;
-            background: repeating-linear-gradient(
-                90deg,
-                #15803d 0px,
-                #15803d 40px,
-                #0284c7 40px,
-                #0284c7 90px,
-                #166534 90px,
-                #166534 140px,
-                #0284c7 140px,
-                #0284c7 180px
-            );
-            animation: spin 6s linear infinite;
-            opacity: 0.85;
-        }
+  #app{
+    padding:10px;
+  }
 
-        @keyframes spin {
-            0% {
-                transform: translateX(0);
-            }
+  .box{
+    padding:20px;
+  }
+}
+</style>
+</head>
 
-            100% {
-                transform: translateX(-50%);
-            }
-        }
+<body>
 
-        .globe-status {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-green);
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px var(--primary-green);
-            text-align: center;
-        }
+<canvas id="matrix"></canvas>
+<div class="scanlines"></div>
 
-        .status-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(5, 10, 18, 0.95);
-            border: 2px solid var(--accent-cyan);
-            padding: 30px 50px;
-            border-radius: 8px;
-            box-shadow: 0 0 35px rgba(0, 243, 255, 0.4);
-            text-align: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 250;
-        }
 
-        .status-popup.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
-        }
+<!-- ================= LOGIN ================= -->
 
-        .status-text {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--accent-cyan);
-            letter-spacing: 3px;
-        }
+<div id="login" class="overlay">
 
-        .status-text.connected {
-            color: var(--primary-green);
-            text-shadow: 0 0 10px var(--primary-green);
-        }
+  <div class="box">
 
-        .classified-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 300;
-            justify-content: center;
-            align-items: center;
-        }
+    <div class="muted">
+      ANONYMOUS NETWORK // SECURE NODE
+    </div>
 
-        .classified-box {
-            background: #080e14;
-            border: 2px solid var(--alert-red);
-            box-shadow: 0 0 25px var(--alert-red);
-            padding: 25px 35px;
-            border-radius:
+    <h1>ACCESS TERMINAL</h1>
+
+    <div>ENTER SYSTEM PASSKEY</div>
+
+    <input
+      id="loginPass"
+      type="password"
+      autocomplete="off"
+      placeholder="PASSKEY"
+    >
+
+    <button class="btn" id="loginBtn">
+      AUTHENTICATE
+    </button>
+
+    <div id="loginMsg" class="red"></div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= OVERRIDE ================= -->
+
+<div id="override" class="overlay">
+
+  <div>
+
+    <div class="skull">☠</div>
+
+    <h1>SYSTEM OVERRIDDEN</h1>
+
+    <div class="cyan">
+      ROOT ACCESS GRANTED
+    </div>
+
+    <button class="btn" id="enterBtn">
+      ENTER TERMINAL
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= MAIN SYSTEM ================= -->
+
+<div id="app">
+
+<header>
+
+  <div class="brand">
+    ANONYMOUS CYBER TERMINAL // DEAD COUNTER
+  </div>
+
+  <div class="status">
+    ● ONLINE
+  </div>
+
+</header>
+
+
+<div class="grid">
+
+<section class="panel">
+
+  <div id="terminal"></div>
+
+  <div class="quick">
+
+    <button class="btn" data-cmd="names">
+      NAMES
+    </button>
+
+    <button class="btn" data-cmd="scan net">
+      SCAN NET
+    </button>
+
+    <button class="btn" data-cmd="status">
+      STATUS
+    </button>
+
+    <button class="btn" data-cmd="clear">
+      CLEAR
+    </button>
+
+  </div>
+
+</section>
+
+
+<aside class="panel side">
+
+  <div class="network">
+    <div class="globe">◎</div>
+  </div>
+
+  <div class="cyan">NETWORK</div>
+
+  <div>NODE: SRI-LANKA-07</div>
+
+  <div>ENCRYPTION: ACTIVE</div>
+
+  <div>TRACE: BLOCKED</div>
+
+  <br>
+
+  <div class="yellow">
+    TYPE <b>help</b> FOR COMMANDS
+  </div>
+
+</aside>
+
+</div>
+</div>
+
+
+<!-- ================= STATUS ================= -->
+
+<div id="statusModal" class="modal">
+
+  <div class="box">
+
+    <h2>SYSTEM STATUS</h2>
+
+    <div>
+      CORE:
+      <span class="cyan">ONLINE</span>
+    </div>
+
+    <div>
+      FIREWALL:
+      <span class="cyan">ACTIVE</span>
+    </div>
+
+    <div>
+      TRACE:
+      <span class="cyan">BLOCKED</span>
+    </div>
+
+    <div>
+      DATABASE:
+      <span class="cyan">READY</span>
+    </div>
+
+    <br>
+
+    <button class="btn" data-close="statusModal">
+      CLOSE
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= NAMES ================= -->
+
+<div id="namesModal" class="modal">
+
+  <div class="box">
+
+    <h2>SUSPECT DATABASE</h2>
+
+    <div class="muted">
+      SELECT A DESIGNATION TO CONTINUE
+    </div>
+
+    <div id="suspects"></div>
+
+    <button class="btn" data-close="namesModal">
+      CLOSE
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= CLASSIFIED PASSKEY ================= -->
+
+<div id="passModal" class="modal">
+
+  <div class="box">
+
+    <h2 class="red">
+      CLASSIFIED ACCESS
+    </h2>
+
+    <div>
+      ENTER CLASSIFIED PASSKEY
+    </div>
+
+    <input
+      id="classifiedPass"
+      type="password"
+      autocomplete="off"
+      placeholder="PASSKEY"
+    >
+
+    <button class="btn" id="classifiedBtn">
+      UNLOCK
+    </button>
+
+    <div id="classifiedMsg" class="red"></div>
+
+    <br>
+
+    <button class="btn" data-close="passModal">
+      CANCEL
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= DOSSIER ================= -->
+
+<div id="dossierModal" class="modal">
+
+  <div class="box dossier">
+
+    <div class="tag">
+      CLASSIFIED DOSSIER
+    </div>
+
+    <h2 id="dossierName">
+      SUSPECT
+    </h2>
+
+    <div id="dossierInfo"></div>
+
+    <br>
+
+    <button class="btn" id="overviewBtn">
+      OVERVIEW
+    </button>
+
+    <button class="btn" data-close="dossierModal">
+      CLOSE
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= SECOND OVERVIEW POPUP ================= -->
+
+<div id="overviewModal" class="modal">
+
+  <div class="overview-box">
+
+    <div class="overview-title">
+      CRIME SCENE EVIDENCE LOG
+    </div>
+
+    <div
+      class="cyan"
+      style="font-weight:bold"
+    >
+      SUSPECT DESIGNATION ANALYSIS
+    </div>
+
+    <!-- THE SELECTED SUSPECT IMAGE APPEARS HERE -->
+    <img
+      id="overviewProfileImg"
+      class="analysis-img"
+      src=""
+      alt="Suspect picture"
+    >
+
+    <div
+      id="overviewReason"
+      class="muted"
+    >
+      Loading case file...
+    </div>
+
+    <br>
+
+    <button
+      class="analysis-close"
+      id="overviewClose"
+    >
+      CLOSE ANALYSIS
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUSPECT DATABASE
+   ========================================================= */
+
+const PROFILES = {
+
+  "suspect 1":{
+    name:"Daham",
+    age:"18",
+    location:"Seeduwa",
+    img:"Daham.jpg"
+  },
+
+  "suspect 2":{
+    name:"Seneth",
+    age:"18",
+    location:"Seeduwa",
+    img:"Seneth.jpg"
+  },
+
+  "suspect 3":{
+    name:"Anuhas",
+    age:"18",
+    location:"Seeduwa",
+    img:"Anuhas.jpg"
+  },
+
+  "suspect 4":{
+    name:"Suran",
+    age:"18",
+    location:"Bopitiya",
+    img:"Suran.jpg"
+  }
+
+};
+
+
+const $ = id => document.getElementById(id);
+
+let selectedSuspectKey = null;
+
+
+/* =========================================================
+   SOUND SYSTEM
+   Uses browser Web Audio.
+   NO MP3 FILES REQUIRED.
+   ========================================================= */
+
+let audioCtx = null;
+
+function audio(){
+
+  const AudioContext =
+    window.AudioContext ||
+    window.webkitAudioContext;
+
+  if(!AudioContext){
+    return null;
+  }
+
+  if(!audioCtx){
+    audioCtx = new AudioContext();
+  }
+
+  if(audioCtx.state === "suspended"){
+    audioCtx.resume();
+  }
+
+  return audioCtx;
+}
+
+
+function tone(
+  frequency,
+  duration,
+  type="square",
+  volume=.025,
+  delay=0
+){
+
+  try{
+
+    const c = audio();
+
+    if(!c) return;
+
+    const oscillator =
+      c.createOscillator();
+
+    const gain =
+      c.createGain();
+
+    oscillator.type = type;
+
+    oscillator.frequency.setValueAtTime(
+      frequency,
+      c.currentTime + delay
+    );
+
+    gain.gain.setValueAtTime(
+      .0001,
+      c.currentTime + delay
+    );
+
+    gain.gain.linearRampToValueAtTime(
+      volume,
+      c.currentTime + delay + .01
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      .0001,
+      c.currentTime + delay + duration
+    );
+
+    oscillator.connect(gain);
+
+    gain.connect(c.destination);
+
+    oscillator.start(
+      c.currentTime + delay
+    );
+
+    oscillator.stop(
+      c.currentTime + delay + duration + .03
+    );
+
+  }catch(e){}
+
+}
+
+
+function sfx(name){
+
+  if(name === "click"){
+    tone(900,.04,"square",.018);
+  }
+
+  else if(name === "ok"){
+
+    tone(520,.08,"square",.03);
+
+    tone(
+      780,
+      .12,
+      "square",
+      .025,
+      .08
+    );
+
+  }
+
+  else if(name === "error"){
+
+    tone(
+      180,
+      .11,
+      "sawtooth",
+      .035
+    );
+
+    tone(
+      120,
+      .15,
+      "sawtooth",
+      .03,
+      .12
+    );
+
+  }
+
+  else if(name === "scan"){
+
+    tone(
+      220,
+      .06,
+      "square",
+      .022
+    );
+
+    tone(
+      330,
+      .06,
+      "square",
+      .022,
+      .08
+    );
+
+    tone(
+      500,
+      .14,
+      "square",
+      .025,
+      .16
+    );
+
+  }
+
+  else if(name === "open"){
+
+    tone(
+      400,
+      .06,
+      "square",
+      .022
+    );
+
+    tone(
+      650,
+      .12,
+      "square",
+      .026,
+      .07
+    );
+
+  }
+
+  else if(name === "warn"){
+
+    tone(
+      700,
+      .07,
+      "square",
+      .025
+    );
+
+    tone(
+      500,
+      .08,
+      "square",
+      .025,
+      .09
+    );
+
+  }
+
+  else if(name === "type"){
+
+    tone(
+      700,
+      .025,
+      "square",
+      .009
+    );
+
+  }
+
+  else if(name === "close"){
+
+    tone(
+      300,
+      .08,
+      "square",
+      .018
+    );
+
+  }
+
+  else if(name === "boot"){
+
+    tone(
+      300,
+      .08,
+      "square",
+      .02
+    );
+
+    tone(
+      450,
+      .08,
+      "square",
+      .02,
+      .09
+    );
+
+    tone(
+      700,
+      .14,
+      "square",
+      .025,
+      .18
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   TERMINAL
+   ========================================================= */
+
+function write(text,cls=""){
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "line " + cls;
+
+  div.textContent = text;
+
+  $("terminal").appendChild(div);
+
+  $("terminal").scrollTop =
+    $("terminal").scrollHeight;
+
+}
+
+
+function boot(){
+
+  $("terminal").innerHTML = "";
+
+  write(
+    "ANONYMOUS CYBER TERMINAL"
+  );
+
+  write(
+    "-------------------------"
+  );
+
+  write(
+    "SECURE CHANNEL ESTABLISHED",
+    "cyan"
+  );
+
+  write(
+    "Type: help"
+  );
+
+}
+
+
+function command(cmd){
+
+  const c =
+    cmd.trim().toLowerCase();
+
+  if(!c) return;
+
+  write(
+    "> " + c,
+    "prompt"
+  );
+
+
+  if(c === "help"){
+
+    write(
+      "AVAILABLE COMMANDS:"
+    );
+
+    write(
+      "names       - open suspect database"
+    );
+
+    write(
+      "scan net    - scan network"
+    );
+
+    write(
+      "status      - system status"
+    );
+
+    write(
+      "clear       - clear terminal"
+    );
+
+  }
+
+
+  else if(c === "names"){
+
+    sfx("open");
+
+    openNames();
+
+  }
+
+
+  else if(c === "scan net"){
+
+    sfx("scan");
+
+    write(
+      "[*] SCANNING NETWORK..."
+    );
+
+    setTimeout(()=>{
+
+      write(
+        "[+] 7 NODES FOUND"
+      );
+
+      write(
+        "[+] TRACE BLOCKED"
+      );
+
+    },450);
+
+  }
+
+
+  else if(c === "status"){
+
+    sfx("open");
+
+    $("statusModal")
+      .style.display = "flex";
+
+  }
+
+
+  else if(c === "clear"){
+
+    $("terminal").innerHTML = "";
+
+  }
+
+
+  else{
+
+    sfx("error");
+
+    write(
+      "ERROR: UNKNOWN COMMAND",
+      "red"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+$("loginBtn").onclick = login;
+
+$("loginPass").addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter"){
+      login();
+    }
+
+  }
+);
+
+
+function login(){
+
+  audio();
+
+  if(
+    $("loginPass").value === "1234"
+  ){
+
+    sfx("ok");
+
+    $("login").style.display =
+      "none";
+
+    $("override").style.display =
+      "flex";
+
+  }
+
+  else{
+
+    sfx("error");
+
+    $("loginMsg").textContent =
+      "ACCESS DENIED";
+
+    $("loginPass").value = "";
+
+  }
+
+}
+
+
+/* =========================================================
+   ENTER TERMINAL
+   ========================================================= */
+
+$("enterBtn").onclick = () => {
+
+  sfx("boot");
+
+  $("override").style.display =
+    "none";
+
+  $("app").style.display =
+    "block";
+
+  boot();
+
+};
+
+
+/* =========================================================
+   QUICK BUTTONS
+   ========================================================= */
+
+document
+  .querySelectorAll("[data-cmd]")
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      sfx("click");
+
+      command(
+        button.dataset.cmd
+      );
+
+    };
+
+  });
+
+
+/* =========================================================
+   CLOSE BUTTONS
+   ========================================================= */
+
+document
+  .querySelectorAll("[data-close]")
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      sfx("close");
+
+      $(button.dataset.close)
+        .style.display = "none";
+
+    };
+
+  });
+
+
+/* =========================================================
+   NAMES DATABASE
+   ========================================================= */
+
+function openNames(){
+
+  const box =
+    $("suspects");
+
+  box.innerHTML = "";
+
+  Object.entries(PROFILES)
+    .forEach(([key,data]) => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "suspect";
+
+      row.innerHTML =
+        "<div>" +
+
+        "<b>" +
+        key.toUpperCase() +
+        "</b><br>" +
+
+        "<span class='muted'>" +
+        data.name +
+        " // " +
+        data.location +
+        "</span>" +
+
+        "</div>";
+
+
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "btn";
+
+      button.textContent =
+        "SELECT";
+
+
+      button.onclick = () => {
+
+        sfx("click");
+
+        selectSuspect(key);
+
+      };
+
+
+      row.appendChild(button);
+
+      box.appendChild(row);
+
+    });
+
+
+  $("namesModal").style.display =
+    "flex";
+
+}
+
+
+/* =========================================================
+   SELECT SUSPECT
+   ========================================================= */
+
+function selectSuspect(key){
+
+  sfx("open");
+
+  selectedSuspectKey =
+    key;
+
+  $("classifiedPass").value =
+    "";
+
+  $("classifiedMsg").textContent =
+    "";
+
+  $("namesModal").style.display =
+    "none";
+
+  $("passModal").style.display =
+    "flex";
+
+  setTimeout(
+    () => $("classifiedPass").focus(),
+    50
+  );
+
+}
+
+
+/* =========================================================
+   CLASSIFIED PASSKEY
+   ========================================================= */
+
+$("classifiedBtn").onclick =
+  unlock;
+
+
+$("classifiedPass").addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter"){
+      unlock();
+    }
+
+  }
+);
+
+
+function unlock(){
+
+  if(
+    $("classifiedPass").value === "@"
+  ){
+
+    sfx("ok");
+
+    $("passModal").style.display =
+      "none";
+
+    openDossier();
+
+  }
+
+  else{
+
+    sfx("error");
+
+    $("classifiedMsg").textContent =
+      "INVALID CLASSIFIED PASSKEY";
+
+    $("classifiedPass").value =
+      "";
+
+  }
+
+}
+
+
+/* =========================================================
+   DOSSIER
+   ========================================================= */
+
+function openDossier(){
+
+  const data =
+    PROFILES[selectedSuspectKey];
+
+  if(!data) return;
+
+  sfx("open");
+
+  $("dossierName").textContent =
+    data.name.toUpperCase();
+
+
+  $("dossierInfo").innerHTML =
+
+    "<div>" +
+    "DESIGNATION: " +
+    "<span class='cyan'>" +
+    selectedSuspectKey.toUpperCase() +
+    "</span>" +
+    "</div>" +
+
+    "<div>" +
+    "AGE: " +
+    "<span class='cyan'>" +
+    data.age +
+    "</span>" +
+    "</div>" +
+
+    "<div>" +
+    "LOCATION: " +
+    "<span class='cyan'>" +
+    data.location +
+    "</span>" +
+    "</div>" +
+
+    "<div>" +
+    "STATUS: " +
+    "<span class='red'>" +
+    "UNDER INVESTIGATION" +
+    "</span>" +
+    "</div>";
+
+
+  $("dossierModal").style.display =
+    "flex";
+
+}
+
+
+/* =========================================================
+   SECOND OVERVIEW POPUP
+   ========================================================= */
+
+$("overviewBtn").onclick =
+  showOverview;
+
+
+function showOverview(){
+
+  const data =
+    PROFILES[selectedSuspectKey];
+
+  if(!data){
+
+    sfx("error");
+
+    return;
+
+  }
+
+  sfx("open");
+
+
+  const img =
+    $("overviewProfileImg");
+
+
+  img.onerror = () => {
+
+    img.onerror = null;
+
+    img.src =
+      "data:image/svg+xml;charset=UTF-8," +
+
+      encodeURIComponent(
+
+        '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">' +
+
+        '<rect width="500" height="500" fill="#020805"/>' +
+
+        '<text x="250" y="230" text-anchor="middle" fill="#00ff66" font-family="monospace" font-size="25">' +
+
+        'NO IMAGE FOUND' +
+
+        '</text>' +
+
+        '<text x="250" y="270" text-anchor="middle" fill="#ff3030" font-family="monospace" font-size="17">' +
+
+        'CHECK FILE NAME' +
+
+        '</text>' +
+
+        '</svg>'
+
+      );
+
+  };
+
+
+  img.src =
+    data.img;
+
+
+  $("overviewReason").innerHTML =
+
+    "<b class='cyan'>SUBJECT:</b> " +
+    data.name +
+
+    "<br>" +
+
+   
