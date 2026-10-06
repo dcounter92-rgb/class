@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,7 +70,6 @@
             backdrop-filter: blur(8px);
         }
 
-        /* Giant Skull Behind Welcome Card */
         .bg-skull {
             position: absolute;
             font-size: 42vw;
@@ -168,7 +166,6 @@
         .accepted { color: var(--primary-green); }
         .denied { color: var(--alert-red); }
 
-        /* Post-Login Skull Screen */
         #giantSkullScreen {
             display: none;
             position: fixed;
@@ -246,7 +243,6 @@
         .success-text { color: var(--primary-green); }
         .alert-text { color: var(--alert-red); }
 
-        /* Windows File Explorer System Styles */
         .files-grid {
             display: flex;
             gap: 20px;
@@ -336,7 +332,6 @@
             color: #000;
         }
 
-        /* Earth Globe Sliding Panel */
         .globe-panel {
             position: fixed;
             top: 0; right: -340px;
@@ -395,7 +390,6 @@
             text-align: center;
         }
 
-        /* Status Command Pop-up */
         .status-popup {
             position: fixed;
             top: 50%; left: 50%;
@@ -429,7 +423,6 @@
             text-shadow: 0 0 10px var(--primary-green);
         }
 
-        /* Classified Modal Popup */
         .classified-modal {
             display: none;
             position: fixed;
@@ -460,7 +453,6 @@
             letter-spacing: 2px;
         }
 
-        /* Details Tab Modal */
         .details-modal {
             display: none;
             position: fixed;
@@ -517,10 +509,8 @@
 </head>
 <body>
 
-    <!-- Matrix Canvas -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Welcome Login Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="bg-skull">💀</div>
         <div class="login-card">
@@ -534,13 +524,11 @@
         </div>
     </div>
 
-    <!-- Giant Skull Flash Screen -->
     <div id="giantSkullScreen">
         <div class="flash-skull">💀</div>
         <div style="color: #00ff66; font-size: 1.5rem; letter-spacing: 5px; margin-top: 20px;">SYSTEM OVERRIDDEN</div>
     </div>
 
-    <!-- Terminal Container -->
     <div class="terminal-container" onclick="document.getElementById('termInput').focus();">
         <div class="terminal-header">
             <div class="terminal-title">
@@ -552,6 +540,7 @@
         <div class="terminal-body" id="termBody">
             <div class="output-line system-text">=====================================================================</div>
             <div class="output-line accent-text">ANONYMOUS CYBER SYSTEM INITIALIZED. ACCESS GRANTED TO DEAD COUNTER.</div>
+            <div class="output-line alert-text">[SECURITY NOTICE]: YOU MUST RUN 'scan net' AND 'status' BEFORE ACCESSING 'names'.</div>
             <div class="output-line system-text">Available commands: <span class="success-text">'names', 'scan net', 'status', 'clear'</span></div>
             <div class="output-line system-text">=====================================================================</div>
         </div>
@@ -569,7 +558,6 @@
         </div>
     </div>
 
-    <!-- Sliding Globe Panel -->
     <div class="globe-panel" id="globePanel">
         <button class="close-btn" id="closeGlobe">&times;</button>
         <div class="globe-container">
@@ -578,12 +566,10 @@
         <div class="globe-status">NET IS PERFECT<br><span style="font-size: 0.9rem; color: var(--accent-cyan);">CONNECTED</span></div>
     </div>
 
-    <!-- Status Command Popup -->
     <div class="status-popup" id="statusPopup">
         <div class="status-text" id="statusText">CHECKING...</div>
     </div>
 
-    <!-- Classified Passkey Modal -->
     <div class="classified-modal" id="classifiedModal">
         <div class="classified-box">
             <div class="classified-title">CLASSIFIED !</div>
@@ -593,7 +579,6 @@
         </div>
     </div>
 
-    <!-- Separate Details Tab Modal -->
     <div class="details-modal" id="detailsModal">
         <div class="details-box">
             <div class="details-header" id="detailsHeader">SUSPECT DOSSIER</div>
@@ -605,7 +590,6 @@
     </div>
 
     <script>
-        /* Database Profiles */
         const PROFILES = {
             'suspect 1': { name: 'Daham', age: '18', location: 'Seeduwa', img: 'daham.jpg' },
             'suspect 2': { name: 'Seneth', age: '18', location: 'Seeduwa', img: 'seneth.jpg' },
@@ -613,7 +597,12 @@
             'suspect 4': { name: 'Suran', age: '18', location: 'Bopitiya', img: 'suran.jpg' }
         };
 
-        /* Matrix Background */
+        /* State verification tracker */
+        const systemChecked = {
+            globe: false,
+            status: false
+        };
+
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; 
@@ -642,7 +631,6 @@
             canvas.height = window.innerHeight;
         });
 
-        /* Login Verification */
         const passInput = document.getElementById('passInput');
         function showPasswordStep() {
             document.getElementById('loginStartBtn').style.display = 'none';
@@ -671,7 +659,6 @@
             }
         });
 
-        /* Terminal System */
         const termBody = document.getElementById('termBody');
         const termInput = document.getElementById('termInput');
         let selectedSuspectKey = null;
@@ -693,43 +680,66 @@
 
             if (cmd === 'clear') {
                 termBody.innerHTML = '';
-            } else if (cmd === 'names') {
-                renderWindowsFiles();
-            } else if (cmd in PROFILES) {
-                openPasskeyModal(cmd);
             } else if (cmd === 'scan net' || cmd === 'scan') {
+                systemChecked.globe = true;
                 openGlobeWithTimer();
+                appendLine('[+] GLOBE NETWORK CHECK COMPLETE.', 'success-text');
             } else if (cmd === 'status') {
+                systemChecked.status = true;
                 showStatusPopup();
+                appendLine('[+] SYSTEM STATUS CHECK COMPLETE.', 'success-text');
+            } else if (cmd === 'names') {
+                if (isCheckComplete()) {
+                    renderWindowsFiles();
+                } else {
+                    denyAccessPrompt();
+                }
+            } else if (cmd in PROFILES) {
+                if (isCheckComplete()) {
+                    openPasskeyModal(cmd);
+                } else {
+                    denyAccessPrompt();
+                }
             } else {
                 appendLine(`Command not recognized: '${rawCmd}'`, 'alert-text');
             }
         }
 
-        /* Direct Quick Actions Runner */
+        function isCheckComplete() {
+            return systemChecked.globe && systemChecked.status;
+        }
+
+        function denyAccessPrompt() {
+            let missing = [];
+            if (!systemChecked.globe) missing.push("'scan net'");
+            if (!systemChecked.status) missing.push("'status'");
+
+            appendLine(`[ACCESS DENIED] Server check incomplete!`, 'alert-text');
+            appendLine(`Required verification step(s) remaining: ${missing.join(' and ')}`, 'accent-text');
+        }
+
         function execQuick(cmd) {
             processCommand(cmd);
             termInput.focus();
         }
 
-        /* Render File Grid */
         function renderWindowsFiles() {
             const filesHtml = `
                 <div class="output-line alert-text" style="font-weight: bold;">[!] SUSPECT DIRECTORY ACCESS GRANTED [!]</div>
                 <div class="files-grid">
-                    <div class="file-card" onclick="openPasskeyModal('suspect 1')">
+                    <div class="file-card" onclick="handleFileClick('suspect 1')">
                         <div class="file-icon">📁</div>
                         <div class="file-name">Suspect 1</div>
                     </div>
-                    <div class="file-card" onclick="openPasskeyModal('suspect 2')">
+                    <div class="file-card" onclick="handleFileClick('suspect 2')">
                         <div class="file-icon">📁</div>
                         <div class="file-name">Suspect 2</div>
                     </div>
-                    <div class="file-card" onclick="openPasskeyModal('suspect 3')">
+                    <div class="file-card" onclick="handleFileClick('suspect 3')">
                         <div class="file-icon">📁</div>
                         <div class="file-name">Suspect 3</div>
                     </div>
-                    <div class="file-card" onclick="openPasskeyModal('suspect 4')">
+                    <div class="file-card" onclick="handleFileClick('suspect 4')">
                         <div class="file-icon">📁</div>
                         <div class="file-name">Suspect 4</div>
                     </div>
@@ -738,7 +748,14 @@
             appendLine(filesHtml, 'system-text');
         }
 
-        /* Scan Net Globe Functionality */
+        function handleFileClick(key) {
+            if (isCheckComplete()) {
+                openPasskeyModal(key);
+            } else {
+                denyAccessPrompt();
+            }
+        }
+
         function openGlobeWithTimer() {
             const panel = document.getElementById('globePanel');
             panel.classList.add('active');
@@ -768,7 +785,6 @@
             }, 1500);
         }
 
-        /* Passkey Security Step */
         const classifiedModal = document.getElementById('classifiedModal');
         const classifiedPassInput = document.getElementById('classifiedPassInput');
 
@@ -795,7 +811,6 @@
             classifiedModal.style.display = 'none';
         }
 
-        /* Profile Details Tab Modal */
         const detailsModal = document.getElementById('detailsModal');
         const detailsHeader = document.getElementById('detailsHeader');
         const detailsBody = document.getElementById('detailsBody');
@@ -820,6 +835,7 @@
 
         function closeDetailsModal() {
             detailsModal.style.display = 'none';
+            targetProfileImg.style.display = 'none';
         }
 
         function handleImgError(img) {
