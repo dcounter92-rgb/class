@@ -72,29 +72,41 @@
             backdrop-filter: blur(8px);
         }
 
+        /* Giant Skull Behind the Popup Card */
+        .bg-skull {
+            position: absolute;
+            font-size: 38vw;
+            color: #ffffff;
+            opacity: 0.08;
+            filter: drop-shadow(0 0 30px #ffffff);
+            pointer-events: none;
+            z-index: 1;
+            transform: scale(1);
+            animation: skullPulse 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes skullPulse {
+            0% { opacity: 0.05; transform: scale(0.98); }
+            100% { opacity: 0.12; transform: scale(1.02); }
+        }
+
         .login-card {
-            background: rgba(10, 20, 15, 0.9);
+            background: rgba(8, 14, 12, 0.92);
             border: 2px solid var(--primary-green);
-            box-shadow: 0 0 25px var(--primary-green);
+            box-shadow: 0 0 30px var(--primary-green);
             padding: 40px 30px;
             border-radius: 8px;
             text-align: center;
             max-width: 450px;
             width: 90%;
             position: relative;
+            z-index: 2;
             animation: pulseGlow 3s infinite alternate;
         }
 
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 15px rgba(0,255,102,0.3); }
-            100% { box-shadow: 0 0 30px rgba(0,255,102,0.8); }
-        }
-
-        .anon-logo {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            color: var(--accent-cyan);
-            text-shadow: 0 0 10px var(--accent-cyan);
+            100% { box-shadow: 0 0 35px rgba(0,255,102,0.8); }
         }
 
         .welcome-title {
@@ -174,9 +186,29 @@
             text-shadow: 0 0 10px var(--alert-red);
         }
 
-        @keyframes flash {
-            0% { opacity: 0.3; }
-            100% { opacity: 1; }
+        /* Massive Skull Flash Screen (Triggered on Correct Password) */
+        #giantSkullScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .flash-skull {
+            font-size: 65vh;
+            color: #ffffff;
+            text-shadow: 0 0 50px #00ff66, 0 0 100px #00ff66;
+            animation: skullFlicker 0.15s infinite alternate;
+        }
+
+        @keyframes skullFlicker {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
         }
 
         /* Terminal Window */
@@ -297,22 +329,6 @@
             background: var(--primary-green);
             color: #000;
         }
-
-        /* Fake Blue Screen of Death */
-        #bsodScreen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #0078d7;
-            color: white;
-            z-index: 1000;
-            padding: 10%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-        }
-
-        #bsodScreen h1 { font-size: 8rem; margin-bottom: 20px; }
-        #bsodScreen p { font-size: 1.5rem; line-height: 1.6; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -322,8 +338,11 @@
 
     <!-- Welcome / Login Modal -->
     <div class="modal-overlay" id="loginModal">
+        <!-- Giant Skull Background Behind Card -->
+        <div class="bg-skull">💀</div>
+
+        <!-- Popup Front Card -->
         <div class="login-card">
-            <div class="anon-logo">☠</div>
             <div class="welcome-title">WELCOME DEAD COUNTER</div>
             <div class="welcome-sub">ANONYMOUS SECURE CYBER NODE v4.09</div>
             
@@ -337,11 +356,17 @@
         </div>
     </div>
 
+    <!-- Massive Skull Popup Screen (Reveals After Entering 1234) -->
+    <div id="giantSkullScreen">
+        <div class="flash-skull">💀</div>
+        <div style="color: #00ff66; font-size: 1.5rem; letter-spacing: 5px; margin-top: 20px;">SYSTEM OVERRIDDEN</div>
+    </div>
+
     <!-- Main Anonymous Terminal -->
     <div class="terminal-container">
         <div class="terminal-header">
             <div class="terminal-title">
-                <span>[☠]</span>
+                <span>[💀]</span>
                 <span>ANONYMOUS_CYBER_TERMINAL // USER: DEAD_COUNTER</span>
             </div>
             <div class="controls">
@@ -354,31 +379,22 @@
         <div class="terminal-body" id="termBody">
             <div class="output-line system-text">=====================================================================</div>
             <div class="output-line accent-text">ANONYMOUS CYBER SYSTEM INITIALIZED. ACCESS GRANTED TO DEAD COUNTER.</div>
-            <div class="output-line system-text">Type <span class="success-text">'help'</span> to list available commands.</div>
+            <div class="output-line system-text">Available commands: <span class="success-text">'names', 'scan', 'nuke', 'status', 'clear'</span></div>
             <div class="output-line system-text">=====================================================================</div>
         </div>
 
         <div class="quick-actions">
-            <button class="action-btn" onclick="execQuick('help')">help</button>
-            <button class="action-btn" onclick="execQuick('matrix')">matrix</button>
+            <button class="action-btn" onclick="execQuick('names')">names</button>
             <button class="action-btn" onclick="execQuick('scan')">scan-net</button>
-            <button class="action-btn" onclick="execQuick('hack')">hack-nasa</button>
             <button class="action-btn" onclick="execQuick('nuke')">nuke</button>
-            <button class="action-btn" onclick="execQuick('bsod')">bsod</button>
+            <button class="action-btn" onclick="execQuick('status')">status</button>
+            <button class="action-btn" onclick="execQuick('clear')">clear</button>
         </div>
 
         <div class="input-line" style="padding: 10px 20px; background: rgba(0,0,0,0.5);">
             <span class="prompt">DEAD_COUNTER@ANON-NODE:~$</span>
             <input type="text" id="termInput" class="term-input" autofocus autocomplete="off" spellcheck="false">
         </div>
-    </div>
-
-    <!-- BSOD Screen -->
-    <div id="bsodScreen">
-        <h1>:(</h1>
-        <p>Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.</p>
-        <p><span id="bsodProg">0</span>% complete</p>
-        <p style="font-size: 0.9rem; margin-top: 40px;">Stop Code: ANONYMOUS_DEAD_COUNTER_OVERFLOW</p>
     </div>
 
     <script>
@@ -433,6 +449,7 @@
         const passInput = document.getElementById('passInput');
         const statusMsg = document.getElementById('statusMsg');
         const loginModal = document.getElementById('loginModal');
+        const giantSkullScreen = document.getElementById('giantSkullScreen');
 
         function showPasswordStep() {
             playBeep(600, 'square', 0.1);
@@ -452,18 +469,21 @@
             const val = passInput.value.replace(/\s+/g, ''); // Accepts "1234" or "1 2 3 4"
             if (val === '1234') {
                 playBeep(880, 'triangle', 0.2);
-                setTimeout(() => playBeep(1200, 'triangle', 0.3), 150);
                 statusMsg.className = 'status-msg accepted';
                 statusMsg.innerText = 'ACCESS ACCEPTED';
-                
+
+                // Fade out welcome modal & show huge skull popup
                 setTimeout(() => {
-                    loginModal.style.transition = 'opacity 0.8s ease';
-                    loginModal.style.opacity = '0';
+                    loginModal.style.display = 'none';
+                    giantSkullScreen.style.display = 'flex';
+                    playBeep(1200, 'sawtooth', 0.6);
+
+                    // Flash huge skull for 1.8 seconds before loading terminal
                     setTimeout(() => {
-                        loginModal.style.display = 'none';
+                        giantSkullScreen.style.display = 'none';
                         document.getElementById('termInput').focus();
-                    }, 800);
-                }, 1000);
+                    }, 1800);
+                }, 800);
             } else {
                 playBeep(150, 'sawtooth', 0.3);
                 statusMsg.className = 'status-msg denied';
@@ -480,11 +500,9 @@
         const termInput = document.getElementById('termInput');
 
         const commands = {
-            'help': 'Available commands: <span class="accent-text">help, matrix, scan, hack, nuke, clear, bsod, status</span>',
+            'names': 'REGISTERED ANONYMOUS MEMBERS:<br>1. DEAD_COUNTER (SYSTEM ADMIN)<br>2. CYBER_GHOST<br>3. PHANTOM_OPERATOR<br>4. SHADOW_NET',
             'status': 'SYSTEM: Anonymous Cyber Node | USER: DEAD_COUNTER | STATUS: ENCRYPTED',
-            'matrix': 'Matrix stream activated...',
             'scan': 'Scanning local subnet for vulnerable nodes... Found 12 active hosts.',
-            'hack': 'Initiating exploit payload... [NASA SERVERS COMPROMISED]',
             'nuke': 'CRITICAL WARNING: LAUNCHING CYBER WARHEAD...',
             'clear': 'CLEAR'
         };
@@ -501,15 +519,10 @@
                     return;
                 }
 
-                if (cmd === 'bsod') {
-                    triggerBSOD();
-                    return;
-                }
-
                 if (cmd in commands) {
                     appendLine(commands[cmd], 'success-text');
                 } else if (cmd !== '') {
-                    appendLine(`Command not recognized: '${cmd}'. Type 'help' for options.`, 'alert-text');
+                    appendLine(`Command not recognized: '${cmd}'. Available commands: 'names', 'scan', 'nuke', 'status', 'clear'`, 'alert-text');
                 }
 
                 termBody.scrollTop = termBody.scrollHeight;
@@ -528,24 +541,6 @@
             termInput.value = cmd;
             const event = new KeyboardEvent('keydown', { key: 'Enter' });
             termInput.dispatchEvent(event);
-        }
-
-        function triggerBSOD() {
-            const bsod = document.getElementById('bsodScreen');
-            const prog = document.getElementById('bsodProg');
-            bsod.style.display = 'block';
-            let count = 0;
-            const timer = setInterval(() => {
-                count += Math.floor(Math.random() * 15) + 1;
-                if (count >= 100) {
-                    count = 100;
-                    clearInterval(timer);
-                    setTimeout(() => {
-                        bsod.style.display = 'none';
-                    }, 1000);
-                }
-                prog.innerText = count;
-            }, 300);
         }
     </script>
 </body>
