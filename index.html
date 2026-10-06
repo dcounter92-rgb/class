@@ -516,11 +516,13 @@
     <div class="classified-modal" id="classifiedModal">
         <div class="classified-box" id="classifiedBox">
             <div class="classified-title">CLASSIFIED !</div>
-            <div style="margin-bottom: 15px;">Passkey please:</div>
-            <input type="password" id="classifiedPassInput" class="pass-input" placeholder="@" style="width: 120px;" autocomplete="off">
+            <div id="passPromptSection">
+                <div style="margin-bottom: 15px;">Passkey please:</div>
+                <input type="password" id="classifiedPassInput" class="pass-input" placeholder="@" style="width: 120px;" autocomplete="off">
+            </div>
             <div id="classifiedContent" style="display: none; margin-top: 15px; text-align: left;"></div>
             <button class="overview-btn" id="overviewBtn" style="display: none;" onclick="showImageOverview()">OVERVIEW</button>
-            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture"></center>
+            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture" onerror="this.style.display='none'; alert('Profile image not found.');"></center>
             <div style="margin-top: 15px;"><span class="clickable-file" onclick="closeClassifiedModal()">[CLOSE]</span></div>
         </div>
     </div>
@@ -555,6 +557,11 @@
             }
         }
         setInterval(drawMatrix, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
 
         /* Login Verification */
         const passInput = document.getElementById('passInput');
@@ -613,7 +620,7 @@
                     document.getElementById('globePanel').classList.add('active');
                 } else if (cmd === 'status') {
                     showStatusPopup();
-                } else {
+                } else if (cmd !== '') {
                     appendLine(`Command not recognized: '${cmd}'`, 'alert-text');
                 }
             }
@@ -621,6 +628,7 @@
 
         document.getElementById('closeGlobe').onclick = () => {
             document.getElementById('globePanel').classList.remove('active');
+            termInput.focus();
         };
 
         function showStatusPopup() {
@@ -632,7 +640,10 @@
             setTimeout(() => {
                 txt.textContent = 'CONNECTED';
                 txt.classList.add('connected');
-                setTimeout(() => { popup.classList.remove('active'); }, 1800);
+                setTimeout(() => { 
+                    popup.classList.remove('active'); 
+                    termInput.focus();
+                }, 1800);
             }, 1500);
         }
 
@@ -640,6 +651,7 @@
         const classifiedModal = document.getElementById('classifiedModal');
         const classifiedPassInput = document.getElementById('classifiedPassInput');
         const classifiedContent = document.getElementById('classifiedContent');
+        const passPromptSection = document.getElementById('passPromptSection');
         const overviewBtn = document.getElementById('overviewBtn');
         const targetProfileImg = document.getElementById('targetProfileImg');
 
@@ -647,6 +659,7 @@
             selectedTargetKey = key;
             classifiedModal.style.display = 'flex';
             classifiedPassInput.value = '';
+            passPromptSection.style.display = 'block';
             classifiedContent.style.display = 'none';
             overviewBtn.style.display = 'none';
             targetProfileImg.style.display = 'none';
@@ -657,6 +670,7 @@
             if (e.key === 'Enter') {
                 if (classifiedPassInput.value === '@') {
                     const data = PROFILES[selectedTargetKey];
+                    passPromptSection.style.display = 'none';
                     classifiedContent.innerHTML = `<span class="accent-text">NAME:</span> ${data.name}<br>` +
                                                  `<span class="accent-text">AGE:</span> ${data.age}<br>` +
                                                  `<span class="accent-text">LOCATION:</span> ${data.location}`;
@@ -676,6 +690,7 @@
 
         function closeClassifiedModal() {
             classifiedModal.style.display = 'none';
+            termInput.focus();
         }
 
         function appendLine(text, className = '') {
