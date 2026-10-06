@@ -3,307 +3,359 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ANONYMOUS CYBER TERMINAL</title>
 
 <style>
 :root{
-  --g:#00ff66;
-  --r:#ff3030;
-  --c:#00eaff;
-  --y:#ffe600;
-  --bg:#020805;
-  --panel:rgba(0,12,7,.95);
+    --green:#00ff66;
+    --red:#ff3030;
+    --cyan:#00eaff;
+    --yellow:#ffe600;
+    --black:#020805;
+    --panel:rgba(0,12,7,.96);
 }
 
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:var(--bg);
-  color:var(--g);
-  font-family:Consolas,monospace;
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--black);
+    color:var(--green);
+    font-family:Consolas,"Courier New",monospace;
 }
 
-button,input{font:inherit}
+button,
+input{
+    font-family:inherit;
+}
 
-button{cursor:pointer}
+button{
+    cursor:pointer;
+}
 
 #matrix{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  opacity:.17;
-  z-index:0;
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.16;
+    z-index:0;
 }
 
 .scanlines{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:20;
-  background:repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 3px,
-    rgba(0,255,102,.025) 4px
-  );
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:100;
+    background:repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 3px,
+        rgba(0,255,102,.025) 4px
+    );
 }
 
-/* ---------- COMMON ---------- */
+/* ================= GENERAL ================= */
 
 .overlay{
-  position:fixed;
-  inset:0;
-  z-index:30;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,.92);
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.94);
 }
 
 .box{
-  width:min(92vw,560px);
-  border:1px solid var(--g);
-  background:var(--panel);
-  box-shadow:0 0 30px rgba(0,255,102,.18);
-  padding:28px;
+    width:min(92vw,560px);
+    border:1px solid var(--green);
+    background:var(--panel);
+    box-shadow:0 0 35px rgba(0,255,102,.20);
+    padding:28px;
 }
 
-h1,h2{
-  margin:0 0 16px;
-  text-shadow:0 0 12px var(--g);
+h1,
+h2{
+    margin:0 0 16px;
+    text-shadow:0 0 12px var(--green);
 }
 
-.muted{opacity:.72}
-.red{color:var(--r)}
-.cyan{color:var(--c)}
-.yellow{color:var(--y)}
+.muted{
+    opacity:.7;
+}
 
-input{
-  width:100%;
-  padding:13px;
-  background:#000;
-  border:1px solid var(--g);
-  color:var(--g);
-  outline:none;
-  margin:10px 0 14px;
+.red{
+    color:var(--red);
+}
+
+.cyan{
+    color:var(--cyan);
+}
+
+.yellow{
+    color:var(--yellow);
 }
 
 .btn{
-  border:1px solid var(--g);
-  background:#001b0d;
-  color:var(--g);
-  padding:10px 14px;
-  margin:4px;
+    border:1px solid var(--green);
+    background:#001b0d;
+    color:var(--green);
+    padding:10px 15px;
+    margin:4px;
+    transition:.15s;
 }
 
 .btn:hover{
-  background:#00351a;
-  box-shadow:0 0 14px rgba(0,255,102,.3);
+    background:#00351a;
+    box-shadow:0 0 15px rgba(0,255,102,.35);
 }
 
-/* ---------- OVERRIDE ---------- */
+/* ================= LOGIN ================= */
+
+#login{
+    display:flex;
+}
+
+#loginPass{
+    width:100%;
+    padding:14px;
+    margin:12px 0;
+    background:#000;
+    border:1px solid var(--green);
+    color:var(--green);
+    outline:none;
+    font-size:18px;
+    text-align:center;
+    letter-spacing:4px;
+}
+
+#loginPass:focus{
+    box-shadow:0 0 15px rgba(0,255,102,.25);
+}
+
+#loginMsg{
+    min-height:22px;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+/* ================= OVERRIDE ================= */
 
 #override{
-  display:none;
-  text-align:center;
+    display:none;
+    text-align:center;
 }
 
 .skull{
-  font-size:clamp(100px,22vw,220px);
-  line-height:1;
-  text-shadow:0 0 35px var(--g);
-  animation:pulse 1.2s infinite alternate;
+    font-size:clamp(110px,24vw,230px);
+    line-height:1;
+    text-shadow:0 0 40px var(--green);
+    animation:skullPulse 1.2s infinite alternate;
 }
 
-@keyframes pulse{
-  to{
-    filter:brightness(1.7);
-    transform:scale(1.02);
-  }
+@keyframes skullPulse{
+    from{
+        filter:brightness(.9);
+    }
+    to{
+        filter:brightness(1.7);
+        transform:scale(1.02);
+    }
 }
 
-/* ---------- TERMINAL ---------- */
+/* ================= APP ================= */
 
 #app{
-  display:none;
-  position:relative;
-  z-index:5;
-  height:100%;
-  padding:18px;
+    display:none;
+    position:relative;
+    z-index:5;
+    height:100%;
+    padding:18px;
 }
 
 header{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--g);
-  padding-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    border-bottom:1px solid var(--green);
+    padding-bottom:10px;
 }
 
-.brand{font-weight:bold}
-.status{color:var(--c)}
+.brand{
+    font-weight:bold;
+}
+
+.status{
+    color:var(--cyan);
+}
 
 .grid{
-  height:calc(100% - 62px);
-  display:grid;
-  grid-template-columns:1fr 300px;
-  gap:14px;
-  padding-top:14px;
+    height:calc(100% - 62px);
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:14px;
+    padding-top:14px;
 }
 
 .panel{
-  border:1px solid rgba(0,255,102,.5);
-  background:rgba(0,8,4,.76);
-  padding:14px;
-  overflow:auto;
+    border:1px solid rgba(0,255,102,.5);
+    background:rgba(0,8,4,.78);
+    padding:14px;
+    overflow:auto;
 }
 
 #terminal{
-  height:calc(100% - 60px);
-  overflow:auto;
-  white-space:pre-wrap;
-  line-height:1.5;
+    height:calc(100% - 60px);
+    overflow:auto;
+    white-space:pre-wrap;
+    line-height:1.5;
 }
 
-.line{margin-bottom:3px}
-.prompt{color:var(--c)}
+.line{
+    margin-bottom:4px;
+}
+
+.prompt{
+    color:var(--cyan);
+}
 
 .quick{
-  margin-top:10px;
+    margin-top:10px;
 }
 
 .network{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:180px;
-  border:1px dashed rgba(0,234,255,.5);
-  margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:180px;
+    border:1px dashed rgba(0,234,255,.5);
+    margin-bottom:14px;
 }
 
 .globe{
-  font-size:72px;
-  animation:spin 8s linear infinite;
+    font-size:75px;
+    animation:spin 8s linear infinite;
 }
 
 @keyframes spin{
-  to{transform:rotate(360deg)}
+    to{
+        transform:rotate(360deg);
+    }
 }
 
-/* ---------- MODALS ---------- */
+/* ================= MODALS ================= */
 
 .modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:15;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,.78);
-  padding:18px;
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:40;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.80);
+    padding:18px;
 }
 
 .modal .box{
-  max-height:90vh;
-  overflow:auto;
+    max-height:90vh;
+    overflow:auto;
 }
 
 .suspect{
-  border:1px solid rgba(0,255,102,.45);
-  padding:12px;
-  margin:8px 0;
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:center;
+    border:1px solid rgba(0,255,102,.45);
+    padding:12px;
+    margin:8px 0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
 }
 
 .suspect:hover{
-  background:rgba(0,255,102,.06);
+    background:rgba(0,255,102,.06);
 }
 
 .dossier{
-  border:1px solid var(--r);
-  box-shadow:0 0 25px rgba(255,48,48,.12);
+    border-color:var(--red);
+    box-shadow:0 0 30px rgba(255,48,48,.16);
 }
 
 .dossier h2{
-  color:var(--r);
-}
-
-/* IMPORTANT:
-   The suspect picture does NOT appear in the dossier.
-   It only appears in the OVERVIEW popup.
-*/
-
-.overview-box{
-  width:min(94vw,650px);
-  max-height:90vh;
-  overflow:auto;
-  border:1px solid var(--c);
-  background:#010806;
-  box-shadow:0 0 35px rgba(0,234,255,.2);
-  padding:22px;
-}
-
-.overview-title{
-  color:var(--c);
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
-.analysis-img{
-  display:block;
-  width:min(100%,360px);
-  height:360px;
-  object-fit:cover;
-  margin:15px auto;
-  border:1px solid var(--c);
-  background:#000;
-}
-
-.analysis-close{
-  border:1px solid var(--c);
-  background:#00151a;
-  color:var(--c);
-  padding:10px 15px;
+    color:var(--red);
 }
 
 .tag{
-  display:inline-block;
-  border:1px solid var(--r);
-  color:var(--r);
-  padding:4px 8px;
-  margin:5px 0;
+    display:inline-block;
+    border:1px solid var(--red);
+    color:var(--red);
+    padding:4px 8px;
+    margin-bottom:8px;
+}
+
+/* ================= OVERVIEW POPUP ================= */
+
+.overview-box{
+    width:min(94vw,650px);
+    max-height:92vh;
+    overflow:auto;
+    border:1px solid var(--cyan);
+    background:#010806;
+    box-shadow:0 0 35px rgba(0,234,255,.22);
+    padding:22px;
+}
+
+.overview-title{
+    color:var(--cyan);
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.analysis-img{
+    display:block;
+    width:min(100%,360px);
+    height:360px;
+    object-fit:cover;
+    margin:18px auto;
+    border:1px solid var(--cyan);
+    background:#000;
+}
+
+.analysis-close{
+    border:1px solid var(--cyan);
+    background:#00151a;
+    color:var(--cyan);
+    padding:10px 15px;
 }
 
 @media(max-width:800px){
-  .grid{
-    grid-template-columns:1fr;
-  }
 
-  .panel.side{
-    display:none;
-  }
+    .grid{
+        grid-template-columns:1fr;
+    }
 
-  header{
-    font-size:13px;
-  }
+    .panel.side{
+        display:none;
+    }
 
-  #app{
-    padding:10px;
-  }
+    #app{
+        padding:10px;
+    }
 
-  .box{
-    padding:20px;
-  }
+    header{
+        font-size:12px;
+    }
+
+    .box{
+        padding:20px;
+    }
 }
 </style>
 </head>
@@ -314,1128 +366,155 @@ header{
 <div class="scanlines"></div>
 
 
-<!-- ================= LOGIN ================= -->
+<!-- =====================================================
+     LOGIN
+===================================================== -->
 
 <div id="login" class="overlay">
 
-  <div class="box">
+    <div class="box">
 
-    <div class="muted">
-      ANONYMOUS NETWORK // SECURE NODE
+        <div class="muted">
+            ANONYMOUS NETWORK // SECURE NODE
+        </div>
+
+        <h1>ACCESS TERMINAL</h1>
+
+        <div>
+            ENTER SYSTEM PASSKEY
+        </div>
+
+        <input
+            id="loginPass"
+            type="password"
+            autocomplete="off"
+            placeholder="PASSKEY"
+        >
+
+        <button
+            id="loginBtn"
+            class="btn"
+            type="button"
+        >
+            AUTHENTICATE
+        </button>
+
+        <div id="loginMsg" class="red"></div>
+
     </div>
-
-    <h1>ACCESS TERMINAL</h1>
-
-    <div>ENTER SYSTEM PASSKEY</div>
-
-    <input
-      id="loginPass"
-      type="password"
-      autocomplete="off"
-      placeholder="PASSKEY"
-    >
-
-    <button class="btn" id="loginBtn">
-      AUTHENTICATE
-    </button>
-
-    <div id="loginMsg" class="red"></div>
-
-  </div>
 
 </div>
 
 
-<!-- ================= OVERRIDE ================= -->
+<!-- =====================================================
+     SYSTEM OVERRIDDEN
+===================================================== -->
 
 <div id="override" class="overlay">
 
-  <div>
+    <div>
 
-    <div class="skull">☠</div>
+        <div class="skull">☠</div>
 
-    <h1>SYSTEM OVERRIDDEN</h1>
+        <h1>SYSTEM OVERRIDDEN</h1>
 
-    <div class="cyan">
-      ROOT ACCESS GRANTED
+        <div class="cyan">
+            ROOT ACCESS GRANTED
+        </div>
+
+        <br>
+
+        <button
+            id="enterBtn"
+            class="btn"
+            type="button"
+        >
+            ENTER TERMINAL
+        </button>
+
     </div>
-
-    <button class="btn" id="enterBtn">
-      ENTER TERMINAL
-    </button>
-
-  </div>
 
 </div>
 
 
-<!-- ================= MAIN SYSTEM ================= -->
+<!-- =====================================================
+     MAIN TERMINAL
+===================================================== -->
 
 <div id="app">
 
-<header>
+    <header>
 
-  <div class="brand">
-    ANONYMOUS CYBER TERMINAL // DEAD COUNTER
-  </div>
+        <div class="brand">
+            ANONYMOUS CYBER TERMINAL // DEAD COUNTER
+        </div>
 
-  <div class="status">
-    ● ONLINE
-  </div>
+        <div class="status">
+            ● ONLINE
+        </div>
 
-</header>
+    </header>
 
 
-<div class="grid">
+    <div class="grid">
 
-<section class="panel">
+        <section class="panel">
 
-  <div id="terminal"></div>
+            <div id="terminal"></div>
 
-  <div class="quick">
+            <div class="quick">
 
-    <button class="btn" data-cmd="names">
-      NAMES
-    </button>
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="names"
+                >
+                    NAMES
+                </button>
 
-    <button class="btn" data-cmd="scan net">
-      SCAN NET
-    </button>
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="scan net"
+                >
+                    SCAN NET
+                </button>
 
-    <button class="btn" data-cmd="status">
-      STATUS
-    </button>
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="status"
+                >
+                    STATUS
+                </button>
 
-    <button class="btn" data-cmd="clear">
-      CLEAR
-    </button>
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="clear"
+                >
+                    CLEAR
+                </button>
 
-  </div>
+            </div>
 
-</section>
+        </section>
 
 
-<aside class="panel side">
+        <aside class="panel side">
 
-  <div class="network">
-    <div class="globe">◎</div>
-  </div>
+            <div class="network">
+                <div class="globe">◎</div>
+            </div>
 
-  <div class="cyan">NETWORK</div>
+            <div class="cyan">
+                NETWORK
+            </div>
 
-  <div>NODE: SRI-LANKA-07</div>
+            <br>
 
-  <div>ENCRYPTION: ACTIVE</div>
+            <div>
+                NODE: SRI-LANKA-07
+            </div>
 
-  <div>TRACE: BLOCKED</div>
-
-  <br>
-
-  <div class="yellow">
-    TYPE <b>help</b> FOR COMMANDS
-  </div>
-
-</aside>
-
-</div>
-</div>
-
-
-<!-- ================= STATUS ================= -->
-
-<div id="statusModal" class="modal">
-
-  <div class="box">
-
-    <h2>SYSTEM STATUS</h2>
-
-    <div>
-      CORE:
-      <span class="cyan">ONLINE</span>
-    </div>
-
-    <div>
-      FIREWALL:
-      <span class="cyan">ACTIVE</span>
-    </div>
-
-    <div>
-      TRACE:
-      <span class="cyan">BLOCKED</span>
-    </div>
-
-    <div>
-      DATABASE:
-      <span class="cyan">READY</span>
-    </div>
-
-    <br>
-
-    <button class="btn" data-close="statusModal">
-      CLOSE
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- ================= NAMES ================= -->
-
-<div id="namesModal" class="modal">
-
-  <div class="box">
-
-    <h2>SUSPECT DATABASE</h2>
-
-    <div class="muted">
-      SELECT A DESIGNATION TO CONTINUE
-    </div>
-
-    <div id="suspects"></div>
-
-    <button class="btn" data-close="namesModal">
-      CLOSE
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- ================= CLASSIFIED PASSKEY ================= -->
-
-<div id="passModal" class="modal">
-
-  <div class="box">
-
-    <h2 class="red">
-      CLASSIFIED ACCESS
-    </h2>
-
-    <div>
-      ENTER CLASSIFIED PASSKEY
-    </div>
-
-    <input
-      id="classifiedPass"
-      type="password"
-      autocomplete="off"
-      placeholder="PASSKEY"
-    >
-
-    <button class="btn" id="classifiedBtn">
-      UNLOCK
-    </button>
-
-    <div id="classifiedMsg" class="red"></div>
-
-    <br>
-
-    <button class="btn" data-close="passModal">
-      CANCEL
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- ================= DOSSIER ================= -->
-
-<div id="dossierModal" class="modal">
-
-  <div class="box dossier">
-
-    <div class="tag">
-      CLASSIFIED DOSSIER
-    </div>
-
-    <h2 id="dossierName">
-      SUSPECT
-    </h2>
-
-    <div id="dossierInfo"></div>
-
-    <br>
-
-    <button class="btn" id="overviewBtn">
-      OVERVIEW
-    </button>
-
-    <button class="btn" data-close="dossierModal">
-      CLOSE
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- ================= SECOND OVERVIEW POPUP ================= -->
-
-<div id="overviewModal" class="modal">
-
-  <div class="overview-box">
-
-    <div class="overview-title">
-      CRIME SCENE EVIDENCE LOG
-    </div>
-
-    <div
-      class="cyan"
-      style="font-weight:bold"
-    >
-      SUSPECT DESIGNATION ANALYSIS
-    </div>
-
-    <!-- THE SELECTED SUSPECT IMAGE APPEARS HERE -->
-    <img
-      id="overviewProfileImg"
-      class="analysis-img"
-      src=""
-      alt="Suspect picture"
-    >
-
-    <div
-      id="overviewReason"
-      class="muted"
-    >
-      Loading case file...
-    </div>
-
-    <br>
-
-    <button
-      class="analysis-close"
-      id="overviewClose"
-    >
-      CLOSE ANALYSIS
-    </button>
-
-  </div>
-
-</div>
-
-
-<script>
-
-/* =========================================================
-   SUSPECT DATABASE
-   ========================================================= */
-
-const PROFILES = {
-
-  "suspect 1":{
-    name:"Daham",
-    age:"18",
-    location:"Seeduwa",
-    img:"Daham.jpg"
-  },
-
-  "suspect 2":{
-    name:"Seneth",
-    age:"18",
-    location:"Seeduwa",
-    img:"Seneth.jpg"
-  },
-
-  "suspect 3":{
-    name:"Anuhas",
-    age:"18",
-    location:"Seeduwa",
-    img:"Anuhas.jpg"
-  },
-
-  "suspect 4":{
-    name:"Suran",
-    age:"18",
-    location:"Bopitiya",
-    img:"Suran.jpg"
-  }
-
-};
-
-
-const $ = id => document.getElementById(id);
-
-let selectedSuspectKey = null;
-
-
-/* =========================================================
-   SOUND SYSTEM
-   Uses browser Web Audio.
-   NO MP3 FILES REQUIRED.
-   ========================================================= */
-
-let audioCtx = null;
-
-function audio(){
-
-  const AudioContext =
-    window.AudioContext ||
-    window.webkitAudioContext;
-
-  if(!AudioContext){
-    return null;
-  }
-
-  if(!audioCtx){
-    audioCtx = new AudioContext();
-  }
-
-  if(audioCtx.state === "suspended"){
-    audioCtx.resume();
-  }
-
-  return audioCtx;
-}
-
-
-function tone(
-  frequency,
-  duration,
-  type="square",
-  volume=.025,
-  delay=0
-){
-
-  try{
-
-    const c = audio();
-
-    if(!c) return;
-
-    const oscillator =
-      c.createOscillator();
-
-    const gain =
-      c.createGain();
-
-    oscillator.type = type;
-
-    oscillator.frequency.setValueAtTime(
-      frequency,
-      c.currentTime + delay
-    );
-
-    gain.gain.setValueAtTime(
-      .0001,
-      c.currentTime + delay
-    );
-
-    gain.gain.linearRampToValueAtTime(
-      volume,
-      c.currentTime + delay + .01
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-      .0001,
-      c.currentTime + delay + duration
-    );
-
-    oscillator.connect(gain);
-
-    gain.connect(c.destination);
-
-    oscillator.start(
-      c.currentTime + delay
-    );
-
-    oscillator.stop(
-      c.currentTime + delay + duration + .03
-    );
-
-  }catch(e){}
-
-}
-
-
-function sfx(name){
-
-  if(name === "click"){
-    tone(900,.04,"square",.018);
-  }
-
-  else if(name === "ok"){
-
-    tone(520,.08,"square",.03);
-
-    tone(
-      780,
-      .12,
-      "square",
-      .025,
-      .08
-    );
-
-  }
-
-  else if(name === "error"){
-
-    tone(
-      180,
-      .11,
-      "sawtooth",
-      .035
-    );
-
-    tone(
-      120,
-      .15,
-      "sawtooth",
-      .03,
-      .12
-    );
-
-  }
-
-  else if(name === "scan"){
-
-    tone(
-      220,
-      .06,
-      "square",
-      .022
-    );
-
-    tone(
-      330,
-      .06,
-      "square",
-      .022,
-      .08
-    );
-
-    tone(
-      500,
-      .14,
-      "square",
-      .025,
-      .16
-    );
-
-  }
-
-  else if(name === "open"){
-
-    tone(
-      400,
-      .06,
-      "square",
-      .022
-    );
-
-    tone(
-      650,
-      .12,
-      "square",
-      .026,
-      .07
-    );
-
-  }
-
-  else if(name === "warn"){
-
-    tone(
-      700,
-      .07,
-      "square",
-      .025
-    );
-
-    tone(
-      500,
-      .08,
-      "square",
-      .025,
-      .09
-    );
-
-  }
-
-  else if(name === "type"){
-
-    tone(
-      700,
-      .025,
-      "square",
-      .009
-    );
-
-  }
-
-  else if(name === "close"){
-
-    tone(
-      300,
-      .08,
-      "square",
-      .018
-    );
-
-  }
-
-  else if(name === "boot"){
-
-    tone(
-      300,
-      .08,
-      "square",
-      .02
-    );
-
-    tone(
-      450,
-      .08,
-      "square",
-      .02,
-      .09
-    );
-
-    tone(
-      700,
-      .14,
-      "square",
-      .025,
-      .18
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   TERMINAL
-   ========================================================= */
-
-function write(text,cls=""){
-
-  const div =
-    document.createElement("div");
-
-  div.className =
-    "line " + cls;
-
-  div.textContent = text;
-
-  $("terminal").appendChild(div);
-
-  $("terminal").scrollTop =
-    $("terminal").scrollHeight;
-
-}
-
-
-function boot(){
-
-  $("terminal").innerHTML = "";
-
-  write(
-    "ANONYMOUS CYBER TERMINAL"
-  );
-
-  write(
-    "-------------------------"
-  );
-
-  write(
-    "SECURE CHANNEL ESTABLISHED",
-    "cyan"
-  );
-
-  write(
-    "Type: help"
-  );
-
-}
-
-
-function command(cmd){
-
-  const c =
-    cmd.trim().toLowerCase();
-
-  if(!c) return;
-
-  write(
-    "> " + c,
-    "prompt"
-  );
-
-
-  if(c === "help"){
-
-    write(
-      "AVAILABLE COMMANDS:"
-    );
-
-    write(
-      "names       - open suspect database"
-    );
-
-    write(
-      "scan net    - scan network"
-    );
-
-    write(
-      "status      - system status"
-    );
-
-    write(
-      "clear       - clear terminal"
-    );
-
-  }
-
-
-  else if(c === "names"){
-
-    sfx("open");
-
-    openNames();
-
-  }
-
-
-  else if(c === "scan net"){
-
-    sfx("scan");
-
-    write(
-      "[*] SCANNING NETWORK..."
-    );
-
-    setTimeout(()=>{
-
-      write(
-        "[+] 7 NODES FOUND"
-      );
-
-      write(
-        "[+] TRACE BLOCKED"
-      );
-
-    },450);
-
-  }
-
-
-  else if(c === "status"){
-
-    sfx("open");
-
-    $("statusModal")
-      .style.display = "flex";
-
-  }
-
-
-  else if(c === "clear"){
-
-    $("terminal").innerHTML = "";
-
-  }
-
-
-  else{
-
-    sfx("error");
-
-    write(
-      "ERROR: UNKNOWN COMMAND",
-      "red"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-$("loginBtn").onclick = login;
-
-$("loginPass").addEventListener(
-  "keydown",
-  e => {
-
-    if(e.key === "Enter"){
-      login();
-    }
-
-  }
-);
-
-
-function login(){
-
-  audio();
-
-  if(
-    $("loginPass").value === "1234"
-  ){
-
-    sfx("ok");
-
-    $("login").style.display =
-      "none";
-
-    $("override").style.display =
-      "flex";
-
-  }
-
-  else{
-
-    sfx("error");
-
-    $("loginMsg").textContent =
-      "ACCESS DENIED";
-
-    $("loginPass").value = "";
-
-  }
-
-}
-
-
-/* =========================================================
-   ENTER TERMINAL
-   ========================================================= */
-
-$("enterBtn").onclick = () => {
-
-  sfx("boot");
-
-  $("override").style.display =
-    "none";
-
-  $("app").style.display =
-    "block";
-
-  boot();
-
-};
-
-
-/* =========================================================
-   QUICK BUTTONS
-   ========================================================= */
-
-document
-  .querySelectorAll("[data-cmd]")
-  .forEach(button => {
-
-    button.onclick = () => {
-
-      sfx("click");
-
-      command(
-        button.dataset.cmd
-      );
-
-    };
-
-  });
-
-
-/* =========================================================
-   CLOSE BUTTONS
-   ========================================================= */
-
-document
-  .querySelectorAll("[data-close]")
-  .forEach(button => {
-
-    button.onclick = () => {
-
-      sfx("close");
-
-      $(button.dataset.close)
-        .style.display = "none";
-
-    };
-
-  });
-
-
-/* =========================================================
-   NAMES DATABASE
-   ========================================================= */
-
-function openNames(){
-
-  const box =
-    $("suspects");
-
-  box.innerHTML = "";
-
-  Object.entries(PROFILES)
-    .forEach(([key,data]) => {
-
-      const row =
-        document.createElement("div");
-
-      row.className =
-        "suspect";
-
-      row.innerHTML =
-        "<div>" +
-
-        "<b>" +
-        key.toUpperCase() +
-        "</b><br>" +
-
-        "<span class='muted'>" +
-        data.name +
-        " // " +
-        data.location +
-        "</span>" +
-
-        "</div>";
-
-
-      const button =
-        document.createElement("button");
-
-      button.className =
-        "btn";
-
-      button.textContent =
-        "SELECT";
-
-
-      button.onclick = () => {
-
-        sfx("click");
-
-        selectSuspect(key);
-
-      };
-
-
-      row.appendChild(button);
-
-      box.appendChild(row);
-
-    });
-
-
-  $("namesModal").style.display =
-    "flex";
-
-}
-
-
-/* =========================================================
-   SELECT SUSPECT
-   ========================================================= */
-
-function selectSuspect(key){
-
-  sfx("open");
-
-  selectedSuspectKey =
-    key;
-
-  $("classifiedPass").value =
-    "";
-
-  $("classifiedMsg").textContent =
-    "";
-
-  $("namesModal").style.display =
-    "none";
-
-  $("passModal").style.display =
-    "flex";
-
-  setTimeout(
-    () => $("classifiedPass").focus(),
-    50
-  );
-
-}
-
-
-/* =========================================================
-   CLASSIFIED PASSKEY
-   ========================================================= */
-
-$("classifiedBtn").onclick =
-  unlock;
-
-
-$("classifiedPass").addEventListener(
-  "keydown",
-  e => {
-
-    if(e.key === "Enter"){
-      unlock();
-    }
-
-  }
-);
-
-
-function unlock(){
-
-  if(
-    $("classifiedPass").value === "@"
-  ){
-
-    sfx("ok");
-
-    $("passModal").style.display =
-      "none";
-
-    openDossier();
-
-  }
-
-  else{
-
-    sfx("error");
-
-    $("classifiedMsg").textContent =
-      "INVALID CLASSIFIED PASSKEY";
-
-    $("classifiedPass").value =
-      "";
-
-  }
-
-}
-
-
-/* =========================================================
-   DOSSIER
-   ========================================================= */
-
-function openDossier(){
-
-  const data =
-    PROFILES[selectedSuspectKey];
-
-  if(!data) return;
-
-  sfx("open");
-
-  $("dossierName").textContent =
-    data.name.toUpperCase();
-
-
-  $("dossierInfo").innerHTML =
-
-    "<div>" +
-    "DESIGNATION: " +
-    "<span class='cyan'>" +
-    selectedSuspectKey.toUpperCase() +
-    "</span>" +
-    "</div>" +
-
-    "<div>" +
-    "AGE: " +
-    "<span class='cyan'>" +
-    data.age +
-    "</span>" +
-    "</div>" +
-
-    "<div>" +
-    "LOCATION: " +
-    "<span class='cyan'>" +
-    data.location +
-    "</span>" +
-    "</div>" +
-
-    "<div>" +
-    "STATUS: " +
-    "<span class='red'>" +
-    "UNDER INVESTIGATION" +
-    "</span>" +
-    "</div>";
-
-
-  $("dossierModal").style.display =
-    "flex";
-
-}
-
-
-/* =========================================================
-   SECOND OVERVIEW POPUP
-   ========================================================= */
-
-$("overviewBtn").onclick =
-  showOverview;
-
-
-function showOverview(){
-
-  const data =
-    PROFILES[selectedSuspectKey];
-
-  if(!data){
-
-    sfx("error");
-
-    return;
-
-  }
-
-  sfx("open");
-
-
-  const img =
-    $("overviewProfileImg");
-
-
-  img.onerror = () => {
-
-    img.onerror = null;
-
-    img.src =
-      "data:image/svg+xml;charset=UTF-8," +
-
-      encodeURIComponent(
-
-        '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">' +
-
-        '<rect width="500" height="500" fill="#020805"/>' +
-
-        '<text x="250" y="230" text-anchor="middle" fill="#00ff66" font-family="monospace" font-size="25">' +
-
-        'NO IMAGE FOUND' +
-
-        '</text>' +
-
-        '<text x="250" y="270" text-anchor="middle" fill="#ff3030" font-family="monospace" font-size="17">' +
-
-        'CHECK FILE NAME' +
-
-        '</text>' +
-
-        '</svg>'
-
-      );
-
-  };
-
-
-  img.src =
-    data.img;
-
-
-  $("overviewReason").innerHTML =
-
-    "<b class='cyan'>SUBJECT:</b> " +
-    data.name +
-
-    "<br>" +
-
-   
+            <
