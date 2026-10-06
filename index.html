@@ -3,564 +3,549 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git CyberTerminal v4.0.9 - Quantum Version Control System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>ANONYMOUS CYBER TERMINAL // DEAD COUNTER</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap');
-        
-        body {
-            font-family: 'Fira Code', monospace;
-            background-color: #0b0e14;
-            color: #00ff66;
-            overflow-x: hidden;
+        :root {
+            --bg-color: #050508;
+            --terminal-bg: rgba(10, 15, 24, 0.95);
+            --primary-green: #00ff66;
+            --accent-cyan: #00f3ff;
+            --alert-red: #ff0055;
+            --text-color: #a3f7bf;
+            --border-color: #00ff6644;
+            --font-mono: 'Courier New', Courier, monospace;
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
         }
-        ::-webkit-scrollbar-track {
-            background: #0d1117;
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #1f2937;
+
+        /* CRT Scanlines Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Background Matrix Canvas */
+        #matrixCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.15;
+        }
+
+        /* Modal Overlay for Welcome / Login */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+
+        .login-card {
+            background: rgba(10, 20, 15, 0.9);
+            border: 2px solid var(--primary-green);
+            box-shadow: 0 0 25px var(--primary-green);
+            padding: 40px 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(0,255,102,0.3); }
+            100% { box-shadow: 0 0 30px rgba(0,255,102,0.8); }
+        }
+
+        .anon-logo {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .welcome-title {
+            color: var(--primary-green);
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px var(--primary-green);
+        }
+
+        .welcome-sub {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
             border-radius: 4px;
         }
 
-        /* Scanline effect */
-        .scanlines {
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0, 0, 0, 0.3) 50%,
-                rgba(0, 0, 0, 0.3)
-            );
-            background-size: 100% 4px;
+        .login-btn:hover {
+            background: var(--primary-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary-green);
         }
 
-        /* Glitch Animation */
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-3px, 3px) }
-            40% { transform: translate(-3px, -3px) }
-            60% { transform: translate(3px, 3px) }
-            80% { transform: translate(3px, -3px) }
-            100% { transform: translate(0) }
+        .pass-input-group {
+            display: none;
+            margin-top: 20px;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
         }
 
-        .glitch-text {
-            animation: glitch 0.2s infinite;
+        .pass-input {
+            background: #000;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            text-align: center;
+            width: 200px;
+            letter-spacing: 5px;
+            border-radius: 4px;
+            outline: none;
+            box-shadow: inset 0 0 5px var(--accent-cyan);
+        }
+
+        .status-msg {
+            font-size: 1rem;
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 24px;
+            letter-spacing: 2px;
+        }
+
+        .accepted {
+            color: var(--primary-green);
+            text-shadow: 0 0 10px var(--primary-green);
+            animation: flash 0.5s infinite alternate;
+        }
+
+        .denied {
+            color: var(--alert-red);
+            text-shadow: 0 0 10px var(--alert-red);
+        }
+
+        @keyframes flash {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* Terminal Window */
+        .terminal-container {
+            width: 90vw;
+            height: 85vh;
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.2);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            color: var(--accent-cyan);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
             display: inline-block;
         }
 
-        /* Terminal Prompt Cursor */
-        .blink-cursor::after {
-            content: '█';
-            animation: blink 1s step-end infinite;
-            margin-left: 2px;
-            color: #00ff66;
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .terminal-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 0.95rem;
         }
 
-        @keyframes blink {
-            50% { opacity: 0; }
+        .output-line {
+            line-height: 1.4;
+            word-break: break-all;
+            user-select: text;
         }
 
-        /* Neon Glows */
-        .glow-green {
-            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
-        }
-        .glow-red {
-            text-shadow: 0 0 8px rgba(255, 0, 85, 0.7);
-        }
-        .glow-blue {
-            text-shadow: 0 0 8px rgba(0, 195, 255, 0.7);
-        }
-        .box-glow {
-            box-shadow: 0 0 15px rgba(0, 255, 102, 0.15);
+        .system-text { color: #888; }
+        .accent-text { color: var(--accent-cyan); }
+        .success-text { color: var(--primary-green); }
+        .alert-text { color: var(--alert-red); }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
         }
 
-        /* Matrix Canvas Overlay */
-        #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 40;
-            opacity: 0.15;
-            transition: opacity 0.3s ease;
+        .prompt {
+            color: var(--primary-green);
+            font-weight: bold;
+            white-space: nowrap;
         }
 
-        /* BSOD Screen */
-        #bsod {
+        .term-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            width: 100%;
+            user-select: text;
+        }
+
+        .quick-actions {
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.6);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(0, 255, 102, 0.1);
+            border: 1px solid var(--primary-green);
+            color: var(--primary-green);
+            padding: 5px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-green);
+            color: #000;
+        }
+
+        /* Fake Blue Screen of Death */
+        #bsodScreen {
             display: none;
             position: fixed;
-            inset: 0;
-            background-color: #0000aa;
-            color: #ffffff;
-            font-family: 'Courier New', Courier, monospace;
-            z-index: 9999;
-            padding: 40px;
-            overflow: auto;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0078d7;
+            color: white;
+            z-index: 1000;
+            padding: 10%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
+
+        #bsodScreen h1 { font-size: 8rem; margin-bottom: 20px; }
+        #bsodScreen p { font-size: 1.5rem; line-height: 1.6; margin-bottom: 20px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between scanlines relative">
+<body>
 
-    <!-- Matrix Rain Canvas -->
-    <canvas id="matrix-canvas"></canvas>
+    <!-- Matrix Background -->
+    <canvas id="matrixCanvas"></canvas>
 
-    <!-- Fake BSOD Screen -->
-    <div id="bsod" onclick="hideBSOD()">
-        <div class="max-w-3xl mx-auto space-y-6">
-            <div class="bg-white text-blue-900 inline-block px-3 py-1 font-bold text-xl mb-4">
-                WINDOWS / GIT SYSTEM CRASH
+    <!-- Welcome / Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-card">
+            <div class="anon-logo">☠</div>
+            <div class="welcome-title">WELCOME DEAD COUNTER</div>
+            <div class="welcome-sub">ANONYMOUS SECURE CYBER NODE v4.09</div>
+            
+            <button class="login-btn" id="loginStartBtn" onclick="showPasswordStep()">LOGIN</button>
+
+            <div class="pass-input-group" id="passGroup">
+                <input type="password" id="passInput" class="pass-input" placeholder="PASSKEY" maxlength="8" autocomplete="off">
             </div>
-            <p class="text-2xl font-bold">A fatal exception 0E has occurred at 0028:C00119AC in VXD GIT(01) + 00008E3E.</p>
-            <p>The current application will be terminated.</p>
-            <ul class="list-disc list-inside space-y-2 my-4 opacity-90">
-                <li>Press any key to terminate your local working tree.</li>
-                <li>Press CTRL+ALT+DEL to restart your classroom PC. You will lose all unsaved homework.</li>
-                <li>Error code: GIT_NUKE_SYSTEM_OVERFLOW_404</li>
-            </ul>
-            <div class="p-4 border-2 border-dashed border-white my-6 bg-blue-950">
-                <p class="text-yellow-300 font-bold">SYMPTOM SUMMARY:</p>
-                <p>Student attempted unauthorized root access to global server repo. Quantum encryption keys dumped to screen.</p>
-            </div>
-            <p class="animate-bounce font-bold text-yellow-300 text-lg">*** Click anywhere on the screen to restore desktop ***</p>
+
+            <div class="status-msg" id="statusMsg"></div>
         </div>
     </div>
 
-    <!-- Header Navbar -->
-    <header class="bg-gray-900/90 border-b border-green-500/30 p-4 sticky top-0 z-30 backdrop-blur box-glow">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <i class="fa-brands fa-github text-3xl text-green-400 glow-green"></i>
-                <div>
-                    <h1 class="text-xl font-bold tracking-wider text-gray-100 flex items-center gap-2">
-                        <span>GIT CYBERTERMINAL</span>
-                        <span class="text-xs bg-red-900/80 text-red-300 px-2 py-0.5 rounded border border-red-500 animate-pulse">RESTRICTED ACCESS</span>
-                    </h1>
-                    <p class="text-xs text-gray-400">Classroom Edition v4.0.9 • Connected to Local Host</p>
-                </div>
+    <!-- Main Anonymous Terminal -->
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <span>[☠]</span>
+                <span>ANONYMOUS_CYBER_TERMINAL // USER: DEAD_COUNTER</span>
             </div>
-
-            <!-- Header Controls & Easter Eggs -->
-            <div class="flex items-center gap-2">
-                <button onclick="toggleMatrixMode()" class="px-3 py-1.5 bg-green-950 hover:bg-green-800 text-green-400 border border-green-500/50 rounded text-xs font-bold transition flex items-center gap-2">
-                    <i class="fa-solid fa-code"></i> Matrix Stream [<span id="matrix-status">LOW</span>]
-                </button>
-                <button onclick="triggerAudioBeep('alert')" class="px-3 py-1.5 bg-yellow-950 hover:bg-yellow-800 text-yellow-300 border border-yellow-500/50 rounded text-xs font-bold transition flex items-center gap-2">
-                    <i class="fa-solid fa-bell"></i> Alarm
-                </button>
-                <button onclick="showBSOD()" class="px-3 py-1.5 bg-red-950 hover:bg-red-800 text-red-300 border border-red-500/50 rounded text-xs font-bold transition flex items-center gap-2">
-                    <i class="fa-solid fa-skull"></i> Nuke System
-                </button>
+            <div class="controls">
+                <span class="control-dot dot-red"></span>
+                <span class="control-dot dot-yellow"></span>
+                <span class="control-dot dot-green"></span>
             </div>
         </div>
-    </header>
 
-    <!-- Main Workspace -->
-    <main class="max-w-7xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-3 gap-6 my-4 flex-1 z-10">
-        
-        <!-- Interactive Terminal (2 Cols on Large Screen) -->
-        <section class="lg:col-span-2 bg-black/80 border border-green-500/40 rounded-lg p-4 flex flex-col justify-between shadow-2xl box-glow min-h-[500px]">
-            <!-- Terminal Header -->
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2 mb-4 text-xs text-gray-400">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-red-500 inline-block cursor-pointer" onclick="clearTerminal()"></span>
-                    <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block cursor-pointer" onclick="triggerAudioBeep('synth')"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-500 inline-block cursor-pointer" onclick="toggleMatrixMode()"></span>
-                    <span class="ml-2 font-semibold text-gray-300">bash - root@school-it-lab:~</span>
-                </div>
-                <div class="text-green-400 text-xs">
-                    <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-ping mr-1"></span> LIVE SESSIONS ACTIVE
-                </div>
-            </div>
+        <div class="terminal-body" id="termBody">
+            <div class="output-line system-text">=====================================================================</div>
+            <div class="output-line accent-text">ANONYMOUS CYBER SYSTEM INITIALIZED. ACCESS GRANTED TO DEAD COUNTER.</div>
+            <div class="output-line system-text">Type <span class="success-text">'help'</span> to list available commands.</div>
+            <div class="output-line system-text">=====================================================================</div>
+        </div>
 
-            <!-- Terminal Output Window -->
-            <div id="terminal-output" class="flex-1 overflow-y-auto space-y-3 pr-2 text-sm max-h-[420px] scroll-smooth">
-                <div class="text-gray-400 text-xs border-b border-gray-800 pb-2">
-                    [SYSTEM READY] Quantum Git Server initialized.<br>
-                    Type <span class="text-yellow-400 font-bold">help</span> or <span class="text-yellow-400 font-bold">secret</span> to view commands list.<br>
-                    <span class="text-green-400">PRO TIP:</span> Fast typing activates Hacker Matrix Overdrive!
-                </div>
-            </div>
+        <div class="quick-actions">
+            <button class="action-btn" onclick="execQuick('help')">help</button>
+            <button class="action-btn" onclick="execQuick('matrix')">matrix</button>
+            <button class="action-btn" onclick="execQuick('scan')">scan-net</button>
+            <button class="action-btn" onclick="execQuick('hack')">hack-nasa</button>
+            <button class="action-btn" onclick="execQuick('nuke')">nuke</button>
+            <button class="action-btn" onclick="execQuick('bsod')">bsod</button>
+        </div>
 
-            <!-- Terminal Input Prompt -->
-            <div class="mt-4 pt-3 border-t border-gray-800 flex items-center gap-2">
-                <span class="text-blue-400 font-bold text-sm">student@git-lab:~$</span>
-                <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false" 
-                       placeholder="Type 'git push --force-world' or 'help'..." 
-                       class="flex-1 bg-transparent text-green-400 outline-none border-none font-mono text-sm focus:ring-0">
-                <button onclick="processCommandFromButton()" class="bg-green-600 hover:bg-green-500 text-black px-3 py-1 rounded text-xs font-bold transition">
-                    RUN
-                </button>
-            </div>
-        </section>
+        <div class="input-line" style="padding: 10px 20px; background: rgba(0,0,0,0.5);">
+            <span class="prompt">DEAD_COUNTER@ANON-NODE:~$</span>
+            <input type="text" id="termInput" class="term-input" autofocus autocomplete="off" spellcheck="false">
+        </div>
+    </div>
 
-        <!-- Interactive Cheat Sheet & Prank Controls -->
-        <section class="space-y-4">
-            
-            <!-- Quick Action Prank Dashboard -->
-            <div class="bg-gray-900/80 border border-green-500/30 rounded-lg p-4 box-glow">
-                <h2 class="text-lg font-bold text-gray-100 mb-3 flex items-center gap-2 border-b border-gray-800 pb-2">
-                    <i class="fa-solid fa-gamepad text-green-400"></i> One-Click Pranks
-                </h2>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="runCommand('git push --force-world')" class="p-2.5 bg-gray-800 hover:bg-red-950 border border-red-500/40 rounded text-xs text-left transition group">
-                        <div class="font-bold text-red-400 group-hover:text-red-300">💣 Force World</div>
-                        <div class="text-[10px] text-gray-400">Overwrite global servers</div>
-                    </button>
-                    <button onclick="runCommand('git summon-ai')" class="p-2.5 bg-gray-800 hover:bg-blue-950 border border-blue-500/40 rounded text-xs text-left transition group">
-                        <div class="font-bold text-blue-400 group-hover:text-blue-300">🤖 AI Takeover</div>
-                        <div class="text-[10px] text-gray-400">Summon Skynet AI</div>
-                    </button>
-                    <button onclick="runCommand('git nuke')" class="p-2.5 bg-gray-800 hover:bg-yellow-950 border border-yellow-500/40 rounded text-xs text-left transition group">
-                        <div class="font-bold text-yellow-400 group-hover:text-yellow-300">☢️ Git Nuke</div>
-                        <div class="text-[10px] text-gray-400">Delete teacher repo</div>
-                    </button>
-                    <button onclick="runCommand('git hack-teacher')" class="p-2.5 bg-gray-800 hover:bg-purple-950 border border-purple-500/40 rounded text-xs text-left transition group">
-                        <div class="font-bold text-purple-400 group-hover:text-purple-300">🕵️ Grade Changer</div>
-                        <div class="text-[10px] text-gray-400">Set ICT grade to A+</div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Official Looking Cheat Sheet -->
-            <div class="bg-gray-900/80 border border-gray-800 rounded-lg p-4">
-                <h2 class="text-md font-bold text-gray-200 mb-3 flex items-center justify-between border-b border-gray-800 pb-2">
-                    <span><i class="fa-solid fa-book-bookmark text-blue-400 mr-2"></i>Official Git Reference</span>
-                    <span class="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded">A/L Syllabus</span>
-                </h2>
-                <div class="space-y-2 text-xs">
-                    <div class="p-2 bg-gray-950 rounded border border-gray-800 flex justify-between items-center hover:border-green-500/50 transition cursor-pointer" onclick="runCommand('git init')">
-                        <div>
-                            <span class="text-yellow-400 font-bold block">git init</span>
-                            <span class="text-gray-400">Initialize a new local repo</span>
-                        </div>
-                        <i class="fa-solid fa-terminal text-gray-600"></i>
-                    </div>
-                    <div class="p-2 bg-gray-950 rounded border border-gray-800 flex justify-between items-center hover:border-green-500/50 transition cursor-pointer" onclick="runCommand('git add .')">
-                        <div>
-                            <span class="text-yellow-400 font-bold block">git add .</span>
-                            <span class="text-gray-400">Stage all working directory files</span>
-                        </div>
-                        <i class="fa-solid fa-terminal text-gray-600"></i>
-                    </div>
-                    <div class="p-2 bg-gray-950 rounded border border-gray-800 flex justify-between items-center hover:border-green-500/50 transition cursor-pointer" onclick="runCommand('git commit -m &quot;Prank Complete&quot;')">
-                        <div>
-                            <span class="text-yellow-400 font-bold block">git commit -m "msg"</span>
-                            <span class="text-gray-400">Save staged snapshot with note</span>
-                        </div>
-                        <i class="fa-solid fa-terminal text-gray-600"></i>
-                    </div>
-                    <div class="p-2 bg-gray-950 rounded border border-gray-800 flex justify-between items-center hover:border-green-500/50 transition cursor-pointer" onclick="runCommand('git push origin main')">
-                        <div>
-                            <span class="text-yellow-400 font-bold block">git push origin main</span>
-                            <span class="text-gray-400">Upload commits to remote GitHub</span>
-                        </div>
-                        <i class="fa-solid fa-terminal text-gray-600"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fake Status Box -->
-            <div class="p-3 bg-green-950/30 border border-green-500/30 rounded text-xs space-y-1">
-                <div class="flex justify-between text-gray-300">
-                    <span>Repository Status:</span>
-                    <span class="text-green-400 font-bold">100% SECURE</span>
-                </div>
-                <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
-                    <div class="bg-green-500 h-full w-full animate-pulse"></div>
-                </div>
-            </div>
-
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900/60 border-t border-gray-800 p-3 text-center text-xs text-gray-500 z-20">
-        <p>Created for IT Class Demonstrations • Press <kbd class="px-1.5 py-0.5 bg-gray-800 border border-gray-700 rounded text-gray-300">ESC</kbd> to clear screen • Built with HTML/JS WebAudio</p>
-    </footer>
+    <!-- BSOD Screen -->
+    <div id="bsodScreen">
+        <h1>:(</h1>
+        <p>Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.</p>
+        <p><span id="bsodProg">0</span>% complete</p>
+        <p style="font-size: 0.9rem; margin-top: 40px;">Stop Code: ANONYMOUS_DEAD_COUNTER_OVERFLOW</p>
+    </div>
 
     <script>
-        // Web Audio API Sound Generator (No external audio files required!)
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new AudioCtx();
-            }
-        }
-
-        function triggerAudioBeep(type) {
-            try {
-                initAudio();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                if (type === 'type') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(600 + Math.random() * 200, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.05);
-                } else if (type === 'alert') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.3);
-                } else if (type === 'synth') {
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.2);
-                }
-            } catch(e) {
-                // Audio fallback silence
-            }
-        }
-
-        // Terminal Logic
-        const terminalOutput = document.getElementById('terminal-output');
-        const terminalInput = document.getElementById('terminal-input');
-        let typingTimer;
-        let keystrokeCount = 0;
-
-        // Monitor fast typing for Hacker Mode
-        terminalInput.addEventListener('keydown', (e) => {
-            triggerAudioBeep('type');
-            keystrokeCount++;
-
-            // Accelerate matrix background opacity on fast typing
-            const matrixCanvas = document.getElementById('matrix-canvas');
-            matrixCanvas.style.opacity = Math.min(0.8, 0.15 + (keystrokeCount * 0.03));
-
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                keystrokeCount = 0;
-                matrixCanvas.style.opacity = matrixOpacityLevel;
-            }, 1000);
-
-            if (e.key === 'Enter') {
-                const cmd = terminalInput.value.trim();
-                if (cmd) {
-                    runCommand(cmd);
-                    terminalInput.value = '';
-                }
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                clearTerminal();
-            }
-        });
-
-        function printLine(text, colorClass = 'text-green-400') {
-            const line = document.createElement('div');
-            line.className = `${colorClass} font-mono text-xs leading-relaxed border-l-2 border-transparent pl-2`;
-            line.innerHTML = text;
-            terminalOutput.appendChild(line);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        }
-
-        function clearTerminal() {
-            terminalOutput.innerHTML = '';
-            printLine('[SYSTEM] Terminal cleared.', 'text-gray-500');
-        }
-
-        function processCommandFromButton() {
-            const cmd = terminalInput.value.trim();
-            if (cmd) {
-                runCommand(cmd);
-                terminalInput.value = '';
-            }
-        }
-
-        function runCommand(cmd) {
-            printLine(`<span class="text-blue-400">student@git-lab:~$</span> <span class="text-white font-bold">${cmd}</span>`);
-            triggerAudioBeep('synth');
-
-            const lowerCmd = cmd.toLowerCase().trim();
-
-            if (lowerCmd === 'clear') {
-                clearTerminal();
-                return;
-            }
-
-            if (lowerCmd === 'help') {
-                printLine('<span class="text-yellow-300 font-bold">Standard Git Commands:</span> git init, git add, git commit, git push, git status');
-                printLine('<span class="text-red-400 font-bold">Secret Easter Egg Commands:</span>');
-                printLine(' • <span class="text-red-400 font-bold">git push --force-world</span> : Overwrite global server clusters');
-                printLine(' • <span class="text-yellow-400 font-bold">git nuke</span> : Wipe local homework repo');
-                printLine(' • <span class="text-blue-400 font-bold">git summon-ai</span> : Connect to Skynet quantum neural link');
-                printLine(' • <span class="text-purple-400 font-bold">git hack-teacher</span> : Override ICT exam scores');
-                printLine(' • <span class="text-green-400 font-bold">matrix</span> : Toggle high-intensity matrix rain');
-                printLine(' • <span class="text-red-500 font-bold">bsod</span> : Simulate fatal Windows crash');
-                return;
-            }
-
-            // Command Handlers
-            if (lowerCmd.includes('push --force-world')) {
-                executeForceWorld();
-            } else if (lowerCmd.includes('nuke')) {
-                executeGitNuke();
-            } else if (lowerCmd.includes('summon-ai')) {
-                executeSummonAI();
-            } else if (lowerCmd.includes('hack-teacher')) {
-                executeHackTeacher();
-            } else if (lowerCmd === 'bsod') {
-                showBSOD();
-            } else if (lowerCmd === 'matrix') {
-                toggleMatrixMode();
-            } else if (lowerCmd.startsWith('git init')) {
-                printLine('Initialized empty Git repository in /home/student/projects/super-secret-app/.git/', 'text-green-300');
-            } else if (lowerCmd.startsWith('git add')) {
-                printLine('Staged 12 files for commit. All changes ready in index buffer.', 'text-green-300');
-            } else if (lowerCmd.startsWith('git commit')) {
-                printLine('[main 8f1a23e] Master commit created successfully. 12 files changed, 435 insertions(+).', 'text-blue-300');
-            } else if (lowerCmd.startsWith('git push')) {
-                printLine('Enumerating objects: 15, done.', 'text-gray-400');
-                printLine('Counting objects: 100% (15/15), done.', 'text-gray-400');
-                printLine('Writing objects: 100% (15/15), 4.2 KiB | 2.1 MiB/s, done.', 'text-gray-400');
-                printLine('To https://github.com/student/school-assignment.git', 'text-green-400');
-                printLine('   a1b2c3d..e4f5g6h  main -> main', 'text-green-400');
-            } else if (lowerCmd === 'git status') {
-                printLine('On branch main', 'text-white');
-                printLine('Your branch is up to date with \'origin/main\'.', 'text-white');
-                printLine('nothing to commit, working tree clean', 'text-green-400');
-            } else {
-                printLine(`git: '${cmd}' is not a standard command. Type <span class="text-yellow-400">help</span> for easter eggs!`, 'text-red-400');
-            }
-        }
-
-        // Custom Funny Prank Actions
-        function executeForceWorld() {
-            triggerAudioBeep('alert');
-            printLine('[ALERT] Overriding global DNS root servers...', 'text-red-400 glow-red font-bold');
-            
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 20;
-                printLine(`[FORCE-WORLD] Injecting payload to GitHub Server Cluster ${progress}%...`, 'text-yellow-300');
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    printLine('SUCCESS: Global GitHub repositories set to READ-ONLY by Student Account!', 'text-red-500 font-bold glow-red');
-                    printLine('ASCII OVERRIDE FLAG: 🚩 [WORLD_DOMINATION_COMPLETE]', 'text-green-400 font-bold');
-                }
-            }, 300);
-        }
-
-        function executeGitNuke() {
-            triggerAudioBeep('alert');
-            printLine('⚠️ WARNING: INITIATING REPOSITORY DESTRUCTION PROTOCOL ⚠️', 'text-red-500 font-bold glitch-text');
-            setTimeout(() => printLine('Deleting .git/ directory...', 'text-yellow-400'), 400);
-            setTimeout(() => printLine('Deleting local homework files...', 'text-yellow-400'), 800);
-            setTimeout(() => printLine('Deleting browser history...', 'text-yellow-400'), 1200);
-            setTimeout(() => {
-                printLine('BOOM! 💣 Repository safely nuked into cyber-space.', 'text-red-400 font-bold text-sm');
-            }, 1600);
-        }
-
-        function executeSummonAI() {
-            printLine('Connecting to Neural Quantum Core on Port 8080...', 'text-blue-400');
-            setTimeout(() => {
-                printLine('🤖 [QUANTUM AI]: Greetings human student. I have reviewed your ICT assignment.', 'text-cyan-300 font-bold');
-                printLine('🤖 [QUANTUM AI]: Your code logic score is 100/100. Automatic grade A+ pushed to teacher computer.', 'text-cyan-300');
-            }, 800);
-        }
-
-        function executeHackTeacher() {
-            printLine('Scanning local network for Teacher Workstation (192.168.1.100)...', 'text-purple-300');
-            setTimeout(() => printLine('Bypassing firewall authentication tokens...', 'text-purple-400'), 500);
-            setTimeout(() => {
-                printLine('SUCCESS: Local grade database modified!', 'text-green-400 font-bold glow-green');
-                printLine('Updated Student Grade: <span class="text-yellow-300 font-bold">A+ (HONORS)</span>', 'text-white');
-            }, 1200);
-        }
-
-        // BSOD Logic
-        function showBSOD() {
-            triggerAudioBeep('alert');
-            document.getElementById('bsod').style.display = 'block';
-        }
-
-        function hideBSOD() {
-            document.getElementById('bsod').style.display = 'none';
-        }
-
-        // Matrix Rain Animation Generator
-        const canvas = document.getElementById('matrix-canvas');
+        /* Matrix Rain Background */
+        const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789GIT_CYBER_MATRIX';
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
         const fontSize = 14;
-        let columns = Math.floor(canvas.width / fontSize);
-        let drops = [];
-
-        for (let i = 0; i < columns; i++) {
-            drops[i] = Math.random() * -100;
-        }
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
 
         function drawMatrix() {
-            ctx.fillStyle = 'rgba(11, 14, 20, 0.05)';
+            ctx.fillStyle = 'rgba(5, 5, 8, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.fillStyle = '#00ff66';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
-                const text = katakana.charAt(Math.floor(Math.random() * katakana.length));
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             }
         }
-
         setInterval(drawMatrix, 33);
 
-        let matrixOpacityLevel = 0.15;
-        function toggleMatrixMode() {
-            const matrixCanvas = document.getElementById('matrix-canvas');
-            const statusLabel = document.getElementById('matrix-status');
+        /* Web Audio Synthesizer Effects */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(freq = 440, type = 'sine', duration = 0.1) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
 
-            if (matrixOpacityLevel === 0.15) {
-                matrixOpacityLevel = 0.6;
-                statusLabel.innerText = 'OVERDRIVE';
-                statusLabel.className = 'text-red-400 font-bold';
-                printLine('[SYSTEM] Matrix Rain Overdrive Activated!', 'text-green-400 font-bold');
-            } else {
-                matrixOpacityLevel = 0.15;
-                statusLabel.innerText = 'LOW';
-                statusLabel.className = '';
-                printLine('[SYSTEM] Matrix Rain set to background low.', 'text-gray-400');
+        /* Authentication Logic */
+        const loginStartBtn = document.getElementById('loginStartBtn');
+        const passGroup = document.getElementById('passGroup');
+        const passInput = document.getElementById('passInput');
+        const statusMsg = document.getElementById('statusMsg');
+        const loginModal = document.getElementById('loginModal');
+
+        function showPasswordStep() {
+            playBeep(600, 'square', 0.1);
+            loginStartBtn.style.display = 'none';
+            passGroup.style.display = 'flex';
+            passInput.focus();
+        }
+
+        passInput.addEventListener('keydown', (e) => {
+            playBeep(300, 'sine', 0.05);
+            if (e.key === 'Enter') {
+                verifyPassword();
             }
-            matrixCanvas.style.opacity = matrixOpacityLevel;
+        });
+
+        function verifyPassword() {
+            const val = passInput.value.replace(/\s+/g, ''); // Accepts "1234" or "1 2 3 4"
+            if (val === '1234') {
+                playBeep(880, 'triangle', 0.2);
+                setTimeout(() => playBeep(1200, 'triangle', 0.3), 150);
+                statusMsg.className = 'status-msg accepted';
+                statusMsg.innerText = 'ACCESS ACCEPTED';
+                
+                setTimeout(() => {
+                    loginModal.style.transition = 'opacity 0.8s ease';
+                    loginModal.style.opacity = '0';
+                    setTimeout(() => {
+                        loginModal.style.display = 'none';
+                        document.getElementById('termInput').focus();
+                    }, 800);
+                }, 1000);
+            } else {
+                playBeep(150, 'sawtooth', 0.3);
+                statusMsg.className = 'status-msg denied';
+                statusMsg.innerText = 'ACCESS DENIED';
+                passInput.value = '';
+                setTimeout(() => {
+                    statusMsg.innerText = '';
+                }, 2000);
+            }
+        }
+
+        /* Terminal System Commands */
+        const termBody = document.getElementById('termBody');
+        const termInput = document.getElementById('termInput');
+
+        const commands = {
+            'help': 'Available commands: <span class="accent-text">help, matrix, scan, hack, nuke, clear, bsod, status</span>',
+            'status': 'SYSTEM: Anonymous Cyber Node | USER: DEAD_COUNTER | STATUS: ENCRYPTED',
+            'matrix': 'Matrix stream activated...',
+            'scan': 'Scanning local subnet for vulnerable nodes... Found 12 active hosts.',
+            'hack': 'Initiating exploit payload... [NASA SERVERS COMPROMISED]',
+            'nuke': 'CRITICAL WARNING: LAUNCHING CYBER WARHEAD...',
+            'clear': 'CLEAR'
+        };
+
+        termInput.addEventListener('keydown', (e) => {
+            playBeep(400, 'sine', 0.04);
+            if (e.key === 'Enter') {
+                const cmd = termInput.value.trim().toLowerCase();
+                appendLine(`DEAD_COUNTER@ANON-NODE:~$ ${termInput.value}`, 'prompt');
+                termInput.value = '';
+
+                if (cmd === 'clear') {
+                    termBody.innerHTML = '';
+                    return;
+                }
+
+                if (cmd === 'bsod') {
+                    triggerBSOD();
+                    return;
+                }
+
+                if (cmd in commands) {
+                    appendLine(commands[cmd], 'success-text');
+                } else if (cmd !== '') {
+                    appendLine(`Command not recognized: '${cmd}'. Type 'help' for options.`, 'alert-text');
+                }
+
+                termBody.scrollTop = termBody.scrollHeight;
+            }
+        });
+
+        function appendLine(text, className = '') {
+            const line = document.createElement('div');
+            line.className = `output-line ${className}`;
+            line.innerHTML = text;
+            termBody.appendChild(line);
+            termBody.scrollTop = termBody.scrollHeight;
+        }
+
+        function execQuick(cmd) {
+            termInput.value = cmd;
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            termInput.dispatchEvent(event);
+        }
+
+        function triggerBSOD() {
+            const bsod = document.getElementById('bsodScreen');
+            const prog = document.getElementById('bsodProg');
+            bsod.style.display = 'block';
+            let count = 0;
+            const timer = setInterval(() => {
+                count += Math.floor(Math.random() * 15) + 1;
+                if (count >= 100) {
+                    count = 100;
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        bsod.style.display = 'none';
+                    }, 1000);
+                }
+                prog.innerText = count;
+            }, 300);
         }
     </script>
 </body>
