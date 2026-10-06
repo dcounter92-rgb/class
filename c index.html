@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suspect Overview System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      padding: 20px;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #8b0000;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #a00000;
+    }
+
+    /* Modal Backdrop */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+    }
+
+    /* Modal Content Box */
+    .modal-content {
+      background-color: #1e1e1e;
+      margin: 10% auto;
+      padding: 24px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      width: 80%;
+      max-width: 550px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    /* Secondary Overview Modal Stacked Above */
+    #overviewModal {
+      z-index: 101;
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    .crime-tag {
+      display: inline-block;
+      background-color: #3d0c0c;
+      color: #ff4d4d;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .reason-text {
+      line-height: 1.6;
+      color: #d1d1d1;
+      background: #141414;
+      padding: 14px;
+      border-left: 3px solid #8b0000;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Case Files Database</h2>
+  <button id="openFolderBtn">Open Suspect Folder</button>
+
+  <!-- Suspect Folder Modal -->
+  <div id="suspectModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('suspectModal')">&times;</span>
+      <h3>Suspect File #4092</h3>
+      <p>Access Granted. Select an action below to inspect this file.</p>
+      <button id="overviewBtn">Overview</button>
+    </div>
+  </div>
+
+  <!-- Random Overview Pop-Up Window -->
+  <div id="overviewModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('overviewModal')">&times;</span>
+      <span class="crime-tag">Crime Scene Evidence Log</span>
+      <h3>Suspect Designation Analysis</h3>
+      <div id="overviewReason" class="reason-text">Loading case file...</div>
+    </div>
+  </div>
+
+  <script>
+    // Pool of generated serial killer crime scene reasons
+    const crimeSceneReasons = [
+      {
+        title: "Signature Rope Braid Matching",
+        details: "DNA matching the suspect was recovered from unique constrictive knots used on victims at three distinct crime scenes within the triad district."
+      },
+      {
+        title: "Forensic Soil Analysis",
+        details: "Rare heavy-metal soil particulates found on the suspect's vehicle tires directly match dirt samples extracted from the rural shallow grave site."
+      },
+      {
+        title: "Cryptic Canvas Artifacts",
+        details: "Handwritten cipher notes recovered from the killer's trophy room match the distinct calligraphy and ink composition found in the suspect's journal."
+      },
+      {
+        title: "Surveillance & Route Stalking",
+        details: "Automatic license plate readers placed the suspect's vehicle within a two-block radius of four separate abduction points minutes before the incidents occurred."
+      },
+      {
+        title: "Trophy Possession",
+        details: "During execution of the search warrant, investigators located a silver pocket watch belonging to victim #2 inside a concealed floor cavity in the suspect's workshop."
+      },
+      {
+        title: "Surgical Pattern Precision",
+        details: "Autopsy reports indicate incision marks left on the victims require specialized medical instruments; the suspect recently placed unmonitored orders for identical surgical tools."
+      }
+    ];
+
+    const openFolderBtn = document.getElementById('openFolderBtn');
+    const overviewBtn = document.getElementById('overviewBtn');
+    const suspectModal = document.getElementById('suspectModal');
+    const overviewModal = document.getElementById('overviewModal');
+    const overviewReason = document.getElementById('overviewReason');
+
+    // Simulate opening the suspect folder (e.g. after passkey verification)
+    openFolderBtn.addEventListener('click', () => {
+      suspectModal.style.display = 'block';
+    });
+
+    // Open the random Overview Pop-up
+    overviewBtn.addEventListener('click', () => {
+      const randomIndex = Math.floor(Math.random() * crimeSceneReasons.length);
+      const selectedReason = crimeSceneReasons[randomIndex];
+
+      overviewReason.innerHTML = `
+        <strong>Primary Suspicion:</strong> ${selectedReason.title}<br><br>
+        <strong>Details:</strong> ${selectedReason.details}
+      `;
+
+      overviewModal.style.display = 'block';
+    });
+
+    // Function to close modals
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Close modal when clicking outside of the modal box
+    window.addEventListener('click', (event) => {
+      if (event.target === suspectModal) closeModal('suspectModal');
+      if (event.target === overviewModal) closeModal('overviewModal');
+    });
+  </script>
+
+</body>
+</html>
