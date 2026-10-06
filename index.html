@@ -47,13 +47,11 @@
             pointer-events: none;
         }
 
-        /* Background Matrix Canvas */
+        /* Matrix Background Canvas */
         #matrixCanvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
             opacity: 0.15;
         }
@@ -72,7 +70,7 @@
             backdrop-filter: blur(8px);
         }
 
-        /* Giant Black and White Skull Behind Welcome Card */
+        /* Giant Skull Behind Welcome Card */
         .bg-skull {
             position: absolute;
             font-size: 42vw;
@@ -81,7 +79,6 @@
             filter: drop-shadow(0 0 30px #ffffff);
             pointer-events: none;
             z-index: 1;
-            transform: scale(1);
             animation: skullPulse 4s infinite alternate ease-in-out;
         }
 
@@ -101,12 +98,6 @@
             width: 90%;
             position: relative;
             z-index: 2;
-            animation: pulseGlow 3s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 15px rgba(0,255,102,0.3); }
-            100% { box-shadow: 0 0 35px rgba(0,255,102,0.8); }
         }
 
         .welcome-title {
@@ -134,8 +125,8 @@
             font-weight: bold;
             cursor: pointer;
             letter-spacing: 2px;
-            transition: all 0.3s ease;
             border-radius: 4px;
+            transition: 0.3s;
         }
 
         .login-btn:hover {
@@ -164,7 +155,6 @@
             letter-spacing: 5px;
             border-radius: 4px;
             outline: none;
-            box-shadow: inset 0 0 5px var(--accent-cyan);
         }
 
         .status-msg {
@@ -172,20 +162,12 @@
             margin-top: 15px;
             font-weight: bold;
             min-height: 24px;
-            letter-spacing: 2px;
         }
 
-        .accepted {
-            color: var(--primary-green);
-            text-shadow: 0 0 10px var(--primary-green);
-        }
+        .accepted { color: var(--primary-green); }
+        .denied { color: var(--alert-red); }
 
-        .denied {
-            color: var(--alert-red);
-            text-shadow: 0 0 10px var(--alert-red);
-        }
-
-        /* Post-Login Skull Flash Screen */
+        /* Post-Login Skull Screen */
         #giantSkullScreen {
             display: none;
             position: fixed;
@@ -201,13 +183,13 @@
         .flash-skull {
             font-size: 65vh;
             color: #ffffff;
-            text-shadow: 0 0 50px #00ff66, 0 0 100px #00ff66;
+            text-shadow: 0 0 50px #00ff66;
             animation: skullFlicker 0.15s infinite alternate;
         }
 
         @keyframes skullFlicker {
-            0% { opacity: 0.8; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.05); }
+            0% { opacity: 0.8; }
+            100% { opacity: 1; transform: scale(1.03); }
         }
 
         /* Terminal Window */
@@ -242,22 +224,6 @@
             gap: 10px;
         }
 
-        .controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .control-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .dot-red { background: #ff5f56; }
-        .dot-yellow { background: #ffbd2e; }
-        .dot-green { background: #27c93f; }
-
         .terminal-body {
             flex: 1;
             padding: 20px;
@@ -278,6 +244,12 @@
         .accent-text { color: var(--accent-cyan); }
         .success-text { color: var(--primary-green); }
         .alert-text { color: var(--alert-red); }
+
+        .clickable-file {
+            color: var(--accent-cyan);
+            cursor: pointer;
+            text-decoration: underline;
+        }
 
         .input-line {
             display: flex;
@@ -300,7 +272,6 @@
             font-family: var(--font-mono);
             font-size: 1rem;
             width: 100%;
-            user-select: text;
         }
 
         .quick-actions {
@@ -321,71 +292,202 @@
             font-size: 0.8rem;
             cursor: pointer;
             border-radius: 3px;
-            transition: all 0.2s;
         }
 
         .action-btn:hover {
             background: var(--primary-green);
             color: #000;
         }
+
+        /* Earth Globe Sliding Panel */
+        .globe-panel {
+            position: fixed;
+            top: 0; right: -340px;
+            width: 320px; height: 100vh;
+            background: rgba(5, 10, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 2px solid var(--primary-green);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 150;
+        }
+
+        .globe-panel.active { right: 0; }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: none; border: none;
+            color: var(--alert-red);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .globe-container {
+            width: 170px; height: 170px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 10px -10px 25px rgba(0,0,0,0.9), 0 0 30px rgba(0, 255, 102, 0.5);
+            background: #0284c7;
+            margin-bottom: 24px;
+        }
+
+        .globe-map {
+            width: 200%; height: 100%;
+            position: absolute;
+            background: repeating-linear-gradient(90deg, #15803d 0px, #15803d 40px, #0284c7 40px, #0284c7 90px, #166534 90px, #166534 140px, #0284c7 140px, #0284c7 180px);
+            animation: spin 6s linear infinite;
+            opacity: 0.85;
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .globe-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary-green);
+        }
+
+        /* Status Command Pop-up */
+        .status-popup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(5, 10, 18, 0.95);
+            border: 2px solid var(--accent-cyan);
+            padding: 30px 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 35px rgba(0, 243, 255, 0.4);
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 250;
+        }
+
+        .status-popup.active {
+            opacity: 1; visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .status-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+            letter-spacing: 3px;
+        }
+
+        .status-text.connected {
+            color: var(--primary-green);
+            text-shadow: 0 0 10px var(--primary-green);
+        }
+
+        /* Classified Modal Popup */
+        .classified-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 300;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .classified-box {
+            background: #080e14;
+            border: 2px solid var(--alert-red);
+            box-shadow: 0 0 25px var(--alert-red);
+            padding: 25px 35px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .classified-title {
+            color: var(--alert-red);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .overview-btn {
+            background: var(--primary-green);
+            color: #000;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            padding: 8px 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .profile-img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid var(--primary-green);
+            margin-top: 15px;
+            display: none;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Matrix Background -->
+    <!-- Matrix Canvas -->
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- Welcome / Login Modal -->
+    <!-- Welcome Login Modal -->
     <div class="modal-overlay" id="loginModal">
-        <!-- Huge Black and White Skull Face Behind Welcome Box -->
         <div class="bg-skull">💀</div>
-
-        <!-- Popup Front Card -->
         <div class="login-card">
             <div class="welcome-title">WELCOME DEAD COUNTER</div>
             <div class="welcome-sub">ANONYMOUS SECURE CYBER NODE v4.09</div>
-            
             <button class="login-btn" id="loginStartBtn" onclick="showPasswordStep()">LOGIN</button>
-
             <div class="pass-input-group" id="passGroup">
                 <input type="password" id="passInput" class="pass-input" placeholder="PASSKEY" maxlength="8" autocomplete="off">
             </div>
-
             <div class="status-msg" id="statusMsg"></div>
         </div>
     </div>
 
-    <!-- Massive Skull Popup Screen (Reveals After Entering 1234) -->
+    <!-- Giant Skull Flash Screen -->
     <div id="giantSkullScreen">
         <div class="flash-skull">💀</div>
         <div style="color: #00ff66; font-size: 1.5rem; letter-spacing: 5px; margin-top: 20px;">SYSTEM OVERRIDDEN</div>
     </div>
 
-    <!-- Main Anonymous Terminal -->
+    <!-- Terminal Container -->
     <div class="terminal-container">
         <div class="terminal-header">
             <div class="terminal-title">
                 <span>[💀]</span>
                 <span>ANONYMOUS_CYBER_TERMINAL // USER: DEAD_COUNTER</span>
             </div>
-            <div class="controls">
-                <span class="control-dot dot-red"></span>
-                <span class="control-dot dot-yellow"></span>
-                <span class="control-dot dot-green"></span>
-            </div>
         </div>
 
         <div class="terminal-body" id="termBody">
             <div class="output-line system-text">=====================================================================</div>
             <div class="output-line accent-text">ANONYMOUS CYBER SYSTEM INITIALIZED. ACCESS GRANTED TO DEAD COUNTER.</div>
-            <div class="output-line system-text">Available commands: <span class="success-text">'names', 'scan', 'nuke', 'status', 'clear'</span></div>
+            <div class="output-line system-text">Available commands: <span class="success-text">'names', 'scan net', 'status', 'clear'</span></div>
             <div class="output-line system-text">=====================================================================</div>
         </div>
 
         <div class="quick-actions">
             <button class="action-btn" onclick="execQuick('names')">names</button>
-            <button class="action-btn" onclick="execQuick('scan')">scan-net</button>
-            <button class="action-btn" onclick="execQuick('nuke')">nuke</button>
+            <button class="action-btn" onclick="execQuick('scan net')">scan net</button>
             <button class="action-btn" onclick="execQuick('status')">status</button>
             <button class="action-btn" onclick="execQuick('clear')">clear</button>
         </div>
@@ -396,16 +498,48 @@
         </div>
     </div>
 
+    <!-- Sliding Globe Panel -->
+    <div class="globe-panel" id="globePanel">
+        <button class="close-btn" id="closeGlobe">&times;</button>
+        <div class="globe-container">
+            <div class="globe-map"></div>
+        </div>
+        <div class="globe-status">NET IS PERFECT</div>
+    </div>
+
+    <!-- Status Command Popup -->
+    <div class="status-popup" id="statusPopup">
+        <div class="status-text" id="statusText">CHECKING...</div>
+    </div>
+
+    <!-- Classified Modal Popup -->
+    <div class="classified-modal" id="classifiedModal">
+        <div class="classified-box" id="classifiedBox">
+            <div class="classified-title">CLASSIFIED !</div>
+            <div style="margin-bottom: 15px;">Passkey please:</div>
+            <input type="password" id="classifiedPassInput" class="pass-input" placeholder="@" style="width: 120px;" autocomplete="off">
+            <div id="classifiedContent" style="display: none; margin-top: 15px; text-align: left;"></div>
+            <button class="overview-btn" id="overviewBtn" style="display: none;" onclick="showImageOverview()">OVERVIEW</button>
+            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture"></center>
+            <div style="margin-top: 15px;"><span class="clickable-file" onclick="closeClassifiedModal()">[CLOSE]</span></div>
+        </div>
+    </div>
+
     <script>
-        /* Matrix Rain Background */
+        /* Database Profiles */
+        const PROFILES = {
+            'daham': { name: 'Daham', age: '18', location: 'Ja-Ela', img: 'daham.jpg' },
+            'seneth': { name: 'Seneth', age: '19', location: 'Colombo', img: 'seneth.jpg' },
+            'anuhas': { name: 'Anuhas', age: '18', location: 'Gampaha', img: 'anuhas.jpg' },
+            'suran': { name: 'Suran', age: '20', location: 'Negombo', img: 'suran.jpg' }
+        };
+
+        /* Matrix Background */
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
-        const fontSize = 14;
-        const columns = Math.floor(canvas.width / fontSize);
+        const fontSize = 14; const columns = Math.floor(canvas.width / fontSize);
         const drops = Array(columns).fill(1);
 
         function drawMatrix() {
@@ -413,107 +547,50 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#00ff66';
             ctx.font = fontSize + 'px monospace';
-
             for (let i = 0; i < drops.length; i++) {
                 const text = chars.charAt(Math.floor(Math.random() * chars.length));
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
         setInterval(drawMatrix, 33);
 
-        /* Web Audio Synthesizer Effects */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playBeep(freq = 440, type = 'sine', duration = 0.1) {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (e) {}
-        }
-
-        /* Authentication Logic */
-        const loginStartBtn = document.getElementById('loginStartBtn');
-        const passGroup = document.getElementById('passGroup');
+        /* Login Verification */
         const passInput = document.getElementById('passInput');
-        const statusMsg = document.getElementById('statusMsg');
-        const loginModal = document.getElementById('loginModal');
-        const giantSkullScreen = document.getElementById('giantSkullScreen');
-
         function showPasswordStep() {
-            playBeep(600, 'square', 0.1);
-            loginStartBtn.style.display = 'none';
-            passGroup.style.display = 'flex';
+            document.getElementById('loginStartBtn').style.display = 'none';
+            document.getElementById('passGroup').style.display = 'flex';
             passInput.focus();
         }
 
         passInput.addEventListener('keydown', (e) => {
-            playBeep(300, 'sine', 0.05);
             if (e.key === 'Enter') {
-                verifyPassword();
+                if (passInput.value.replace(/\s+/g, '') === '1234') {
+                    document.getElementById('statusMsg').className = 'status-msg accepted';
+                    document.getElementById('statusMsg').innerText = 'ACCESS ACCEPTED';
+                    setTimeout(() => {
+                        document.getElementById('loginModal').style.display = 'none';
+                        document.getElementById('giantSkullScreen').style.display = 'flex';
+                        setTimeout(() => {
+                            document.getElementById('giantSkullScreen').style.display = 'none';
+                            document.getElementById('termInput').focus();
+                        }, 1800);
+                    }, 800);
+                } else {
+                    document.getElementById('statusMsg').className = 'status-msg denied';
+                    document.getElementById('statusMsg').innerText = 'ACCESS DENIED';
+                    passInput.value = '';
+                }
             }
         });
 
-        function verifyPassword() {
-            const val = passInput.value.replace(/\s+/g, ''); // Accepts "1234" or "1 2 3 4"
-            if (val === '1234') {
-                playBeep(880, 'triangle', 0.2);
-                statusMsg.className = 'status-msg accepted';
-                statusMsg.innerText = 'ACCESS ACCEPTED';
-
-                // Fade out modal and show huge skull popup
-                setTimeout(() => {
-                    loginModal.style.display = 'none';
-                    giantSkullScreen.style.display = 'flex';
-                    playBeep(1200, 'sawtooth', 0.6);
-
-                    // Flash huge skull then show terminal
-                    setTimeout(() => {
-                        giantSkullScreen.style.display = 'none';
-                        document.getElementById('termInput').focus();
-                    }, 1800);
-                }, 800);
-            } else {
-                playBeep(150, 'sawtooth', 0.3);
-                statusMsg.className = 'status-msg denied';
-                statusMsg.innerText = 'ACCESS DENIED';
-                passInput.value = '';
-                setTimeout(() => {
-                    statusMsg.innerText = '';
-                }, 2000);
-            }
-        }
-
-        /* Terminal System Commands */
+        /* Terminal System */
         const termBody = document.getElementById('termBody');
         const termInput = document.getElementById('termInput');
-
-        const commands = {
-            'names': `<span class="alert-text" style="font-size: 1.1rem; font-weight: bold;">[!] MOST WANTED LIST [!]</span><br>` +
-                     `----------------------------------------<br>` +
-                     `<span class="accent-text">FILE #01:</span> Daham<br>` +
-                     `<span class="accent-text">FILE #02:</span> Seneth<br>` +
-                     `<span class="accent-text">FILE #03:</span> Anuhas<br>` +
-                     `<span class="accent-text">FILE #04:</span> Suran<br>` +
-                     `----------------------------------------`,
-            'status': 'SYSTEM: Anonymous Cyber Node | USER: DEAD_COUNTER | STATUS: ENCRYPTED',
-            'scan': 'Scanning local subnet for vulnerable nodes... Found 12 active hosts.',
-            'nuke': 'CRITICAL WARNING: LAUNCHING CYBER WARHEAD...',
-            'clear': 'CLEAR'
-        };
+        let selectedTargetKey = null;
 
         termInput.addEventListener('keydown', (e) => {
-            playBeep(400, 'sine', 0.04);
             if (e.key === 'Enter') {
                 const cmd = termInput.value.trim().toLowerCase();
                 appendLine(`DEAD_COUNTER@ANON-NODE:~$ ${termInput.value}`, 'prompt');
@@ -522,17 +599,84 @@
                 if (cmd === 'clear') {
                     termBody.innerHTML = '';
                     return;
+                } else if (cmd === 'names') {
+                    appendLine(`<span class="alert-text" style="font-size: 1.1rem; font-weight: bold;">[!] WANTED LIST [!]</span><br>` +
+                        `----------------------------------------<br>` +
+                        `<span class="accent-text">FILE #01:</span> <span class="clickable-file" onclick="openProfileModal('daham')">Daham</span><br>` +
+                        `<span class="accent-text">FILE #02:</span> <span class="clickable-file" onclick="openProfileModal('seneth')">Seneth</span><br>` +
+                        `<span class="accent-text">FILE #03:</span> <span class="clickable-file" onclick="openProfileModal('anuhas')">Anuhas</span><br>` +
+                        `<span class="accent-text">FILE #04:</span> <span class="clickable-file" onclick="openProfileModal('suran')">Suran</span><br>` +
+                        `----------------------------------------`, 'success-text');
+                } else if (cmd in PROFILES) {
+                    openProfileModal(cmd);
+                } else if (cmd === 'scan net' || cmd === 'scan') {
+                    document.getElementById('globePanel').classList.add('active');
+                } else if (cmd === 'status') {
+                    showStatusPopup();
+                } else {
+                    appendLine(`Command not recognized: '${cmd}'`, 'alert-text');
                 }
-
-                if (cmd in commands) {
-                    appendLine(commands[cmd], 'success-text');
-                } else if (cmd !== '') {
-                    appendLine(`Command not recognized: '${cmd}'. Available commands: 'names', 'scan', 'nuke', 'status', 'clear'`, 'alert-text');
-                }
-
-                termBody.scrollTop = termBody.scrollHeight;
             }
         });
+
+        document.getElementById('closeGlobe').onclick = () => {
+            document.getElementById('globePanel').classList.remove('active');
+        };
+
+        function showStatusPopup() {
+            const popup = document.getElementById('statusPopup');
+            const txt = document.getElementById('statusText');
+            txt.textContent = 'CHECKING...';
+            txt.classList.remove('connected');
+            popup.classList.add('active');
+            setTimeout(() => {
+                txt.textContent = 'CONNECTED';
+                txt.classList.add('connected');
+                setTimeout(() => { popup.classList.remove('active'); }, 1800);
+            }, 1500);
+        }
+
+        /* Classified Modal Handling */
+        const classifiedModal = document.getElementById('classifiedModal');
+        const classifiedPassInput = document.getElementById('classifiedPassInput');
+        const classifiedContent = document.getElementById('classifiedContent');
+        const overviewBtn = document.getElementById('overviewBtn');
+        const targetProfileImg = document.getElementById('targetProfileImg');
+
+        function openProfileModal(key) {
+            selectedTargetKey = key;
+            classifiedModal.style.display = 'flex';
+            classifiedPassInput.value = '';
+            classifiedContent.style.display = 'none';
+            overviewBtn.style.display = 'none';
+            targetProfileImg.style.display = 'none';
+            classifiedPassInput.focus();
+        }
+
+        classifiedPassInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (classifiedPassInput.value === '@') {
+                    const data = PROFILES[selectedTargetKey];
+                    classifiedContent.innerHTML = `<span class="accent-text">NAME:</span> ${data.name}<br>` +
+                                                 `<span class="accent-text">AGE:</span> ${data.age}<br>` +
+                                                 `<span class="accent-text">LOCATION:</span> ${data.location}`;
+                    classifiedContent.style.display = 'block';
+                    overviewBtn.style.display = 'inline-block';
+                    targetProfileImg.src = data.img;
+                } else {
+                    alert('ACCESS DENIED: Invalid Passkey!');
+                    classifiedPassInput.value = '';
+                }
+            }
+        });
+
+        function showImageOverview() {
+            targetProfileImg.style.display = 'block';
+        }
+
+        function closeClassifiedModal() {
+            classifiedModal.style.display = 'none';
+        }
 
         function appendLine(text, className = '') {
             const line = document.createElement('div');
