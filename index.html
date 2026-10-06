@@ -7,258 +7,2019 @@
 <title>ANONYMOUS CYBER TERMINAL</title>
 
 <style>
-* {
-    box-sizing: border-box;
+:root{
+    --green:#00ff66;
+    --red:#ff3030;
+    --cyan:#00eaff;
+    --yellow:#ffe600;
+    --black:#020805;
+    --panel:rgba(0,12,7,.96);
 }
 
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-    color: #00ff66;
-    font-family: "Courier New", monospace;
+*{
+    box-sizing:border-box;
 }
 
-body {
-    position: relative;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--black);
+    color:var(--green);
+    font-family:Consolas,"Courier New",monospace;
 }
 
-#matrix {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    opacity: .25;
+button,
+input{
+    font-family:inherit;
 }
 
-.screen {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
+button{
+    cursor:pointer;
 }
 
-/* ---------- LOGIN ---------- */
-
-#loginScreen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    padding: 20px;
+#matrix{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.16;
+    z-index:0;
 }
 
-.loginBox {
-    width: min(480px, 94vw);
-    padding: 35px;
-    border: 1px solid #00ff66;
-    background: rgba(0, 15, 5, .94);
-    box-shadow: 0 0 35px rgba(0,255,100,.25);
-    text-align: center;
+.scanlines{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:100;
+    background:repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 3px,
+        rgba(0,255,102,.025) 4px
+    );
 }
 
-.logo {
-    font-size: clamp(25px, 5vw, 45px);
-    font-weight: bold;
-    text-shadow: 0 0 15px #00ff66;
-    margin-bottom: 8px;
+/* ================= GENERAL ================= */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.94);
 }
 
-.sub {
-    color: #54ff9a;
-    font-size: 12px;
-    margin-bottom: 30px;
+.box{
+    width:min(92vw,560px);
+    border:1px solid var(--green);
+    background:var(--panel);
+    box-shadow:0 0 35px rgba(0,255,102,.20);
+    padding:28px;
 }
 
-input {
-    width: 100%;
-    padding: 14px;
-    background: #000;
-    border: 1px solid #00ff66;
-    color: #00ff66;
-    font-family: inherit;
-    font-size: 18px;
-    outline: none;
-    text-align: center;
+h1,
+h2{
+    margin:0 0 16px;
+    text-shadow:0 0 12px var(--green);
 }
 
-button {
-    font-family: inherit;
-    cursor: pointer;
+.muted{
+    opacity:.7;
 }
 
-.mainBtn {
-    width: 100%;
-    margin-top: 15px;
-    padding: 14px;
-    background: #00ff66;
-    color: #000;
-    border: 0;
-    font-weight: bold;
-    font-family: inherit;
-    font-size: 16px;
+.red{
+    color:var(--red);
 }
 
-.mainBtn:hover {
-    box-shadow: 0 0 20px #00ff66;
+.cyan{
+    color:var(--cyan);
 }
 
-#error {
-    min-height: 20px;
-    margin-top: 15px;
-    color: #ff3333;
+.yellow{
+    color:var(--yellow);
 }
 
-/* ---------- OVERRIDE ---------- */
-
-#overrideScreen {
-    display: none;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+.btn{
+    border:1px solid var(--green);
+    background:#001b0d;
+    color:var(--green);
+    padding:10px 15px;
+    margin:4px;
+    transition:.15s;
 }
 
-.skull {
-    font-size: clamp(80px, 18vw, 190px);
-    animation: pulse 1.2s infinite alternate;
+.btn:hover{
+    background:#00351a;
+    box-shadow:0 0 15px rgba(0,255,102,.35);
 }
 
-.overrideText {
-    font-size: clamp(30px, 7vw, 70px);
-    font-weight: bold;
-    text-shadow: 0 0 25px #00ff66;
+/* ================= LOGIN ================= */
+
+#login{
+    display:flex;
 }
 
-@keyframes pulse {
-    from { transform: scale(1); text-shadow: 0 0 10px #00ff66; }
-    to { transform: scale(1.08); text-shadow: 0 0 40px #00ff66; }
+#loginPass{
+    width:100%;
+    padding:14px;
+    margin:12px 0;
+    background:#000;
+    border:1px solid var(--green);
+    color:var(--green);
+    outline:none;
+    font-size:18px;
+    text-align:center;
+    letter-spacing:4px;
 }
 
-/* ---------- TERMINAL ---------- */
-
-#terminalScreen {
-    display: none;
-    height: 100%;
-    padding: 15px;
+#loginPass:focus{
+    box-shadow:0 0 15px rgba(0,255,102,.25);
 }
 
-.terminal {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #00ff66;
-    background: rgba(0, 10, 3, .88);
-    display: flex;
-    flex-direction: column;
+#loginMsg{
+    min-height:22px;
+    margin-top:10px;
+    font-weight:bold;
 }
 
-.topbar {
-    padding: 12px;
-    border-bottom: 1px solid #00ff66;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
+/* ================= OVERRIDE ================= */
+
+#override{
+    display:none;
+    text-align:center;
 }
 
-.status {
-    color: #00ff66;
+.skull{
+    font-size:clamp(110px,24vw,230px);
+    line-height:1;
+    text-shadow:0 0 40px var(--green);
+    animation:skullPulse 1.2s infinite alternate;
 }
 
-.terminalOutput {
-    flex: 1;
-    overflow-y: auto;
-    padding: 18px;
-    white-space: pre-wrap;
-    line-height: 1.5;
+@keyframes skullPulse{
+    from{
+        filter:brightness(.9);
+    }
+    to{
+        filter:brightness(1.7);
+        transform:scale(1.02);
+    }
 }
 
-.commandArea {
-    border-top: 1px solid #00ff66;
-    padding: 12px;
+/* ================= APP ================= */
+
+#app{
+    display:none;
+    position:relative;
+    z-index:5;
+    height:100%;
+    padding:18px;
 }
 
-.commandInput {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+header{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    border-bottom:1px solid var(--green);
+    padding-bottom:10px;
 }
 
-.prompt {
-    font-weight: bold;
+.brand{
+    font-weight:bold;
 }
 
-#command {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 8px 0;
-    color: #00ff66;
-    text-align: left;
-    font-size: 16px;
+.status{
+    color:var(--cyan);
 }
 
-.quickButtons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 10px;
+.grid{
+    height:calc(100% - 62px);
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:14px;
+    padding-top:14px;
 }
 
-.quickButtons button {
-    background: #001d0a;
-    color: #00ff66;
-    border: 1px solid #00ff66;
-    padding: 8px 12px;
+.panel{
+    border:1px solid rgba(0,255,102,.5);
+    background:rgba(0,8,4,.78);
+    padding:14px;
+    overflow:auto;
 }
 
-.quickButtons button:hover {
-    background: #00ff66;
-    color: #000;
+#terminal{
+    height:calc(100% - 60px);
+    overflow:auto;
+    white-space:pre-wrap;
+    line-height:1.5;
 }
 
-/* ---------- MODALS ---------- */
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 20;
-    inset: 0;
-    background: rgba(0,0,0,.78);
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
+.line{
+    margin-bottom:4px;
 }
 
-.modalBox {
-    width: min(900px, 96vw);
-    max-height: 92vh;
-    overflow-y: auto;
-    border: 1px solid #00ff66;
-    background: #000b04;
-    box-shadow: 0 0 35px rgba(0,255,100,.3);
-    padding: 20px;
-    position: relative;
+.prompt{
+    color:var(--cyan);
 }
 
-.modalTitle {
-    border-bottom: 1px solid #00ff66;
-    padding-bottom: 12px;
-    margin-bottom: 18px;
-    font-size: clamp(18px, 4vw, 28px);
+.quick{
+    margin-top:10px;
 }
 
-.close {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    border: 0;
-    background: transparent;
-    color: #00ff66;
-    font-size: 25px;
+.network{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:180px;
+    border:1px dashed rgba(0,234,255,.5);
+    margin-bottom:14px;
 }
 
-.suspectGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 
+.globe{
+    font-size:75px;
+    animation:spin 8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ================= MODALS ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:40;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.80);
+    padding:18px;
+}
+
+.modal .box{
+    max-height:90vh;
+    overflow:auto;
+}
+
+.suspect{
+    border:1px solid rgba(0,255,102,.45);
+    padding:12px;
+    margin:8px 0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.suspect:hover{
+    background:rgba(0,255,102,.06);
+}
+
+.dossier{
+    border-color:var(--red);
+    box-shadow:0 0 30px rgba(255,48,48,.16);
+}
+
+.dossier h2{
+    color:var(--red);
+}
+
+.tag{
+    display:inline-block;
+    border:1px solid var(--red);
+    color:var(--red);
+    padding:4px 8px;
+    margin-bottom:8px;
+}
+
+/* ================= OVERVIEW POPUP ================= */
+
+.overview-box{
+    width:min(94vw,650px);
+    max-height:92vh;
+    overflow:auto;
+    border:1px solid var(--cyan);
+    background:#010806;
+    box-shadow:0 0 35px rgba(0,234,255,.22);
+    padding:22px;
+}
+
+.overview-title{
+    color:var(--cyan);
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.analysis-img{
+    display:block;
+    width:min(100%,360px);
+    height:360px;
+    object-fit:cover;
+    margin:18px auto;
+    border:1px solid var(--cyan);
+    background:#000;
+}
+
+.analysis-close{
+    border:1px solid var(--cyan);
+    background:#00151a;
+    color:var(--cyan);
+    padding:10px 15px;
+}
+
+@media(max-width:800px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .panel.side{
+        display:none;
+    }
+
+    #app{
+        padding:10px;
+    }
+
+    header{
+        font-size:12px;
+    }
+
+    .box{
+        padding:20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+<div class="scanlines"></div>
+
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<div id="login" class="overlay">
+
+    <div class="box">
+
+        <div class="muted">
+            ANONYMOUS NETWORK // SECURE NODE
+        </div>
+
+        <h1>ACCESS TERMINAL</h1>
+
+        <div>
+            ENTER SYSTEM PASSKEY
+        </div>
+
+        <input
+            id="loginPass"
+            type="password"
+            autocomplete="off"
+            placeholder="PASSKEY"
+        >
+
+        <button
+            id="loginBtn"
+            class="btn"
+            type="button"
+        >
+            AUTHENTICATE
+        </button>
+
+        <div id="loginMsg" class="red"></div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SYSTEM OVERRIDDEN
+===================================================== -->
+
+<div id="override" class="overlay">
+
+    <div>
+
+        <div class="skull">☠</div>
+
+        <h1>SYSTEM OVERRIDDEN</h1>
+
+        <div class="cyan">
+            ROOT ACCESS GRANTED
+        </div>
+
+        <br>
+
+        <button
+            id="enterBtn"
+            class="btn"
+            type="button"
+        >
+            ENTER TERMINAL
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN TERMINAL
+===================================================== -->
+
+<div id="app">
+
+    <header>
+
+        <div class="brand">
+            ANONYMOUS CYBER TERMINAL // DEAD COUNTER
+        </div>
+
+        <div class="status">
+            ● ONLINE
+        </div>
+
+    </header>
+
+
+    <div class="grid">
+
+        <section class="panel">
+
+            <div id="terminal"></div>
+
+            <div class="quick">
+
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="names"
+                >
+                    NAMES
+                </button>
+
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="scan net"
+                >
+                    SCAN NET
+                </button>
+
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="status"
+                >
+                    STATUS
+                </button>
+
+                <button
+                    class="btn"
+                    type="button"
+                    data-command="clear"
+                >
+                    CLEAR
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <aside class="panel side">
+
+            <div class="network">
+                <div class="globe">◎</div>
+            </div>
+
+            <div class="cyan">
+                NETWORK
+            </div>
+
+            <br>
+
+            <div>
+                NODE: SRI-LANKA-07
+            </div>
+
+            <div>
+                ENCRYPTION: ACTIVE
+            </div>
+
+            <div>
+                TRACE: BLOCKED
+            </div>
+
+            <br>
+
+            <div class="yellow">
+                TYPE <b>help</b> FOR COMMANDS
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     STATUS MODAL
+===================================================== -->
+
+<div id="statusModal" class="modal">
+
+    <div class="box">
+
+        <h2>SYSTEM STATUS</h2>
+
+        <p>
+            CORE:
+            <span class="cyan">ONLINE</span>
+        </p>
+
+        <p>
+            FIREWALL:
+            <span class="cyan">ACTIVE</span>
+        </p>
+
+        <p>
+            TRACE:
+            <span class="cyan">BLOCKED</span>
+        </p>
+
+        <p>
+            DATABASE:
+            <span class="cyan">READY</span>
+        </p>
+
+        <br>
+
+        <button
+            class="btn closeModal"
+            type="button"
+            data-close="statusModal"
+        >
+            CLOSE
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SUSPECT DATABASE
+===================================================== -->
+
+<div id="namesModal" class="modal">
+
+    <div class="box">
+
+        <h2>SUSPECT DATABASE</h2>
+
+        <div class="muted">
+            SELECT A DESIGNATION TO CONTINUE
+        </div>
+
+        <br>
+
+        <div id="suspects"></div>
+
+        <button
+            class="btn closeModal"
+            type="button"
+            data-close="namesModal"
+        >
+            CLOSE
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CLASSIFIED PASSKEY
+===================================================== -->
+
+<div id="passModal" class="modal">
+
+    <div class="box">
+
+        <h2 class="red">
+            CLASSIFIED ACCESS
+        </h2>
+
+        <div>
+            ENTER CLASSIFIED PASSKEY
+        </div>
+
+        <input
+            id="classifiedPass"
+            type="password"
+            autocomplete="off"
+            placeholder="PASSKEY"
+        >
+
+        <button
+            id="classifiedBtn"
+            class="btn"
+            type="button"
+        >
+            UNLOCK
+        </button>
+
+        <div
+            id="classifiedMsg"
+            class="red"
+        ></div>
+
+        <br>
+
+        <button
+            class="btn closeModal"
+            type="button"
+            data-close="passModal"
+        >
+            CANCEL
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DOSSIER
+===================================================== -->
+
+<div id="dossierModal" class="modal">
+
+    <div class="box dossier">
+
+        <div class="tag">
+            CLASSIFIED DOSSIER
+        </div>
+
+        <h2 id="dossierName">
+            SUSPECT
+        </h2>
+
+        <div id="dossierInfo"></div>
+
+        <br>
+
+        <button
+            id="overviewBtn"
+            class="btn"
+            type="button"
+        >
+            OVERVIEW
+        </button>
+
+        <button
+            class="btn closeModal"
+            type="button"
+            data-close="dossierModal"
+        >
+            CLOSE
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SECOND OVERVIEW POPUP
+===================================================== -->
+
+<div id="overviewModal" class="modal">
+
+    <div class="overview-box">
+
+        <div class="overview-title">
+            CRIME SCENE EVIDENCE LOG
+        </div>
+
+        <div
+            class="cyan"
+            style="font-weight:bold"
+        >
+            SUSPECT DESIGNATION ANALYSIS
+        </div>
+
+        <img
+            id="overviewProfileImg"
+            class="analysis-img"
+            src=""
+            alt="Suspect Picture"
+        >
+
+        <div
+            id="overviewReason"
+            class="muted"
+        >
+            Loading case file...
+        </div>
+
+        <br>
+
+        <button
+            id="overviewClose"
+            class="analysis-close"
+            type="button"
+        >
+            CLOSE ANALYSIS
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUSPECT DATABASE
+========================================================= */
+
+const PROFILES = {
+
+    "suspect 1":{
+        name:"Daham",
+        age:"18",
+        location:"Seeduwa",
+        img:"Daham.jpg"
+    },
+
+    "suspect 2":{
+        name:"Seneth",
+        age:"18",
+        location:"Seeduwa",
+        img:"Seneth.jpg"
+    },
+
+    "suspect 3":{
+        name:"Anuhas",
+        age:"18",
+        location:"Seeduwa",
+        img:"Anuhas.jpg"
+    },
+
+    "suspect 4":{
+        name:"Suran",
+        age:"18",
+        location:"Bopitiya",
+        img:"Suran.jpg"
+    }
+
+};
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let selectedSuspectKey = null;
+let audioCtx = null;
+
+
+/* =========================================================
+   SOUND ENGINE
+========================================================= */
+
+function getAudio(){
+
+    const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+    if(!AudioContext){
+        return null;
+    }
+
+    if(!audioCtx){
+        audioCtx = new AudioContext();
+    }
+
+    if(audioCtx.state === "suspended"){
+        audioCtx.resume().catch(()=>{});
+    }
+
+    return audioCtx;
+}
+
+
+function tone(
+    frequency,
+    duration,
+    type,
+    volume,
+    delay
+){
+
+    try{
+
+        const ctx = getAudio();
+
+        if(!ctx){
+            return;
+        }
+
+        const oscillator =
+            ctx.createOscillator();
+
+        const gain =
+            ctx.createGain();
+
+        oscillator.type =
+            type || "square";
+
+        oscillator.frequency.setValueAtTime(
+            frequency,
+            ctx.currentTime + (delay || 0)
+        );
+
+        gain.gain.setValueAtTime(
+            0.0001,
+            ctx.currentTime + (delay || 0)
+        );
+
+        gain.gain.linearRampToValueAtTime(
+            volume || .025,
+            ctx.currentTime + (delay || 0) + .01
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .0001,
+            ctx.currentTime + (delay || 0) + duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start(
+            ctx.currentTime + (delay || 0)
+        );
+
+        oscillator.stop(
+            ctx.currentTime + (delay || 0) +
+            duration + .03
+        );
+
+    }catch(error){
+
+        /* Sound failure must NEVER stop the website. */
+
+    }
+
+}
+
+
+function sfx(name){
+
+    if(name === "click"){
+
+        tone(
+            900,
+            .04,
+            "square",
+            .018
+        );
+
+    }
+
+
+    else if(name === "ok"){
+
+        tone(
+            520,
+            .08,
+            "square",
+            .03
+        );
+
+        tone(
+            780,
+            .12,
+            "square",
+            .025,
+            .08
+        );
+
+    }
+
+
+    else if(name === "error"){
+
+        tone(
+            180,
+            .11,
+            "sawtooth",
+            .035
+        );
+
+        tone(
+            120,
+            .15,
+            "sawtooth",
+            .03,
+            .12
+        );
+
+    }
+
+
+    else if(name === "scan"){
+
+        tone(
+            220,
+            .06,
+            "square",
+            .022
+        );
+
+        tone(
+            330,
+            .06,
+            "square",
+            .022,
+            .08
+        );
+
+        tone(
+            500,
+            .14,
+            "square",
+            .025,
+            .16
+        );
+
+    }
+
+
+    else if(name === "open"){
+
+        tone(
+            400,
+            .06,
+            "square",
+            .022
+        );
+
+        tone(
+            650,
+            .12,
+            "square",
+            .026,
+            .07
+        );
+
+    }
+
+
+    else if(name === "close"){
+
+        tone(
+            300,
+            .08,
+            "square",
+            .018
+        );
+
+    }
+
+
+    else if(name === "type"){
+
+        tone(
+            700,
+            .025,
+            "square",
+            .008
+        );
+
+    }
+
+
+    else if(name === "boot"){
+
+        tone(
+            300,
+            .08,
+            "square",
+            .02
+        );
+
+        tone(
+            450,
+            .08,
+            "square",
+            .02,
+            .09
+        );
+
+        tone(
+            700,
+            .14,
+            "square",
+            .025,
+            .18
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN
+   =========================================================
+   
+   IMPORTANT:
+   There is ONLY ONE login function.
+   
+   Correct password:
+   1234
+========================================================= */
+
+const loginScreen =
+    document.getElementById("login");
+
+const loginPassword =
+    document.getElementById("loginPass");
+
+const loginButton =
+    document.getElementById("loginBtn");
+
+const loginMessage =
+    document.getElementById("loginMsg");
+
+
+loginButton.addEventListener(
+    "click",
+    checkLogin
+);
+
+
+loginPassword.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            checkLogin();
+
+        }
+
+    }
+);
+
+
+function checkLogin(){
+
+    /*
+       Read exactly what the user typed.
+       trim() removes accidental spaces.
+    */
+
+    const enteredPassword =
+        loginPassword.value.trim();
+
+
+    /*
+       Start audio here.
+       Even if audio fails,
+       login continues.
+    */
+
+    getAudio();
+
+
+    /*
+       THE ACTUAL LOGIN CHECK
+    */
+
+    if(enteredPassword === "1234"){
+
+        sfx("ok");
+
+        loginMessage.textContent = "";
+
+        loginScreen.style.display =
+            "none";
+
+        document.getElementById(
+            "override"
+        ).style.display = "flex";
+
+    }
+
+    else{
+
+        sfx("error");
+
+        loginMessage.textContent =
+            "ACCESS DENIED";
+
+        loginPassword.value = "";
+
+        loginPassword.focus();
+
+    }
+
+}
+
+
+/* =========================================================
+   ENTER TERMINAL
+========================================================= */
+
+document
+    .getElementById("enterBtn")
+    .addEventListener(
+        "click",
+        function(){
+
+            sfx("boot");
+
+            document.getElementById(
+                "override"
+            ).style.display = "none";
+
+            document.getElementById(
+                "app"
+            ).style.display = "block";
+
+            bootTerminal();
+
+        }
+    );
+
+
+/* =========================================================
+   TERMINAL
+========================================================= */
+
+function writeTerminal(
+    text,
+    className
+){
+
+    const line =
+        document.createElement("div");
+
+    line.className =
+        "line " + (className || "");
+
+    line.textContent =
+        text;
+
+    const terminal =
+        document.getElementById(
+            "terminal"
+        );
+
+    terminal.appendChild(line);
+
+    terminal.scrollTop =
+        terminal.scrollHeight;
+
+}
+
+
+function bootTerminal(){
+
+    const terminal =
+        document.getElementById(
+            "terminal"
+        );
+
+    terminal.innerHTML = "";
+
+    writeTerminal(
+        "ANONYMOUS CYBER TERMINAL"
+    );
+
+    writeTerminal(
+        "-------------------------"
+    );
+
+    writeTerminal(
+        "SECURE CHANNEL ESTABLISHED",
+        "cyan"
+    );
+
+    writeTerminal(
+        "Type: help"
+    );
+
+}
+
+
+/* =========================================================
+   TERMINAL COMMANDS
+========================================================= */
+
+function runCommand(command){
+
+    const cmd =
+        command.trim().toLowerCase();
+
+    if(!cmd){
+        return;
+    }
+
+
+    writeTerminal(
+        "> " + cmd,
+        "prompt"
+    );
+
+
+    if(cmd === "help"){
+
+        writeTerminal(
+            "AVAILABLE COMMANDS:"
+        );
+
+        writeTerminal(
+            "names       - open suspect database"
+        );
+
+        writeTerminal(
+            "scan net    - scan network"
+        );
+
+        writeTerminal(
+            "status      - system status"
+        );
+
+        writeTerminal(
+            "clear       - clear terminal"
+        );
+
+    }
+
+
+    else if(cmd === "names"){
+
+        sfx("open");
+
+        openNames();
+
+    }
+
+
+    else if(cmd === "scan net"){
+
+        sfx("scan");
+
+        writeTerminal(
+            "[*] SCANNING NETWORK..."
+        );
+
+        setTimeout(
+            function(){
+
+                writeTerminal(
+                    "[+] 7 NODES FOUND"
+                );
+
+                writeTerminal(
+                    "[+] TRACE BLOCKED"
+                );
+
+            },
+            500
+        );
+
+    }
+
+
+    else if(cmd === "status"){
+
+        sfx("open");
+
+        document.getElementById(
+            "statusModal"
+        ).style.display = "flex";
+
+    }
+
+
+    else if(cmd === "clear"){
+
+        document.getElementById(
+            "terminal"
+        ).innerHTML = "";
+
+    }
+
+
+    else{
+
+        sfx("error");
+
+        writeTerminal(
+            "ERROR: UNKNOWN COMMAND",
+            "red"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   QUICK BUTTONS
+========================================================= */
+
+document
+    .querySelectorAll("[data-command]")
+    .forEach(
+        function(button){
+
+            button.addEventListener(
+                "click",
+                function(){
+
+                    sfx("click");
+
+                    runCommand(
+                        button.dataset.command
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   SUSPECT DATABASE
+========================================================= */
+
+function openNames(){
+
+    const container =
+        document.getElementById(
+            "suspects"
+        );
+
+    container.innerHTML = "";
+
+
+    Object.entries(PROFILES)
+        .forEach(
+            function([key,data]){
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+                row.className =
+                    "suspect";
+
+
+                const info =
+                    document.createElement(
+                        "div"
+                    );
+
+                info.innerHTML =
+                    "<b>" +
+                    key.toUpperCase() +
+                    "</b><br>" +
+
+                    "<span class='muted'>" +
+                    data.name +
+                    " // " +
+                    data.location +
+                    "</span>";
+
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.className =
+                    "btn";
+
+                button.type =
+                    "button";
+
+                button.textContent =
+                    "SELECT";
+
+
+                button.addEventListener(
+                    "click",
+                    function(){
+
+                        sfx("click");
+
+                        selectSuspect(key);
+
+                    }
+                );
+
+
+                row.appendChild(info);
+
+                row.appendChild(button);
+
+                container.appendChild(row);
+
+            }
+        );
+
+
+    document.getElementById(
+        "namesModal"
+    ).style.display = "flex";
+
+}
+
+
+/* =========================================================
+   SELECT SUSPECT
+========================================================= */
+
+function selectSuspect(key){
+
+    selectedSuspectKey =
+        key;
+
+    document.getElementById(
+        "namesModal"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "classifiedPass"
+    ).value = "";
+
+
+    document.getElementById(
+        "classifiedMsg"
+    ).textContent = "";
+
+
+    document.getElementById(
+        "passModal"
+    ).style.display = "flex";
+
+
+    sfx("open");
+
+
+    setTimeout(
+        function(){
+
+            document.getElementById(
+                "classifiedPass"
+            ).focus();
+
+        },
+        100
+    );
+
+}
+
+
+/* =========================================================
+   CLASSIFIED PASSKEY
+   Correct password: @
+========================================================= */
+
+const classifiedInput =
+    document.getElementById(
+        "classifiedPass"
+    );
+
+
+document
+    .getElementById("classifiedBtn")
+    .addEventListener(
+        "click",
+        checkClassifiedPass
+    );
+
+
+classifiedInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            checkClassifiedPass();
+
+        }
+
+    }
+);
+
+
+function checkClassifiedPass(){
+
+    const entered =
+        classifiedInput.value.trim();
+
+
+    if(entered === "@"){
+
+        sfx("ok");
+
+        document.getElementById(
+            "passModal"
+        ).style.display = "none";
+
+        openDossier();
+
+    }
+
+    else{
+
+        sfx("error");
+
+        document.getElementById(
+            "classifiedMsg"
+        ).textContent =
+            "INVALID CLASSIFIED PASSKEY";
+
+        classifiedInput.value = "";
+
+        classifiedInput.focus();
+
+    }
+
+}
+
+
+/* =========================================================
+   DOSSIER
+========================================================= */
+
+function openDossier(){
+
+    const data =
+        PROFILES[selectedSuspectKey];
+
+    if(!data){
+        return;
+    }
+
+
+    document.getElementById(
+        "dossierName"
+    ).textContent =
+        data.name.toUpperCase();
+
+
+    document.getElementById(
+        "dossierInfo"
+    ).innerHTML =
+
+        "<div>" +
+        "DESIGNATION: " +
+        "<span class='cyan'>" +
+        selectedSuspectKey.toUpperCase() +
+        "</span>" +
+        "</div>" +
+
+        "<div>" +
+        "AGE: " +
+        "<span class='cyan'>" +
+        data.age +
+        "</span>" +
+        "</div>" +
+
+        "<div>" +
+        "LOCATION: " +
+        "<span class='cyan'>" +
+        data.location +
+        "</span>" +
+        "</div>" +
+
+        "<div>" +
+        "STATUS: " +
+        "<span class='red'>" +
+        "UNDER INVESTIGATION" +
+        "</span>" +
+        "</div>";
+
+
+    document.getElementById(
+        "dossierModal"
+    ).style.display = "flex";
+
+
+    sfx("open");
+
+}
+
+
+/* =========================================================
+   OVERVIEW
+========================================================= */
+
+document
+    .getElementById("overviewBtn")
+    .addEventListener(
+        "click",
+        showOverview
+    );
+
+
+function showOverview(){
+
+    const data =
+        PROFILES[selectedSuspectKey];
+
+    if(!data){
+
+        sfx("error");
+
+        return;
+
+    }
+
+
+    const image =
+        document.getElementById(
+            "overviewProfileImg"
+        );
+
+
+    /*
+       If the image filename is wrong,
+       show a useful fallback instead of
+       breaking the page.
+    */
+
+    image.onerror =
+        function(){
+
+            image.onerror = null;
+
+            image.src =
+                "data:image/svg+xml;charset=UTF-8," +
+
+                encodeURIComponent(
+
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">' +
+
+                    '<rect width="500" height="500" fill="#020805"/>' +
+
+                    '<text x="250" y="230" text-anchor="middle" fill="#00ff66" font-family="monospace" font-size="25">' +
+
+                    'NO IMAGE FOUND' +
+
+                    '</text>' +
+
+                    '<text x="250" y="270" text-anchor="middle" fill="#ff3030" font-family="monospace" font-size="17">' +
+
+                    'CHECK FILE NAME' +
+
+                    '</text>' +
+
+                    '</svg>'
+
+                );
+
+        };
+
+
+    /*
+       The image is ONLY inserted
+       into the second popup.
+    */
+
+    image.src =
+        data.img;
+
+
+    document.getElementById(
+        "overviewReason"
+    ).innerHTML =
+
+        "<b class='cyan'>SUBJECT:</b> " +
+        data.name +
+
+        "<br>" +
+
+        "<b class='cyan'>DESIGNATION:</b> " +
+        selectedSuspectKey.toUpperCase() +
+
+        "<br>" +
+
+        "<b class='cyan'>AGE:</b> " +
+        data.age +
+
+        "<br>" +
+
+        "<b class='cyan'>LOCATION:</b> " +
+        data.location +
+
+        "<br><br>" +
+
+        "<b class='red'>PRIMARY SUSPICION:</b><br>" +
+
+        "Classified evidence analysis indicates this subject is linked to the current investigation. Further evidence remains restricted under the anonymous network protocol.";
+
+
+    document.getElementById(
+        "overviewModal"
+    ).style.display = "flex";
+
+
+    sfx("open");
+
+}
+
+
+/* =========================================================
+   CLOSE OVERVIEW
+========================================================= */
+
+document
+    .getElementById("overviewClose")
+    .addEventListener(
+        "click",
+        function(){
+
+            sfx("close");
+
+            document.getElementById(
+                "overviewModal"
+            ).style.display = "none";
+
+        }
+    );
+
+
+/* =========================================================
+   CLOSE MODALS
+========================================================= */
+
+document
+    .querySelectorAll(".closeModal")
+    .forEach(
+        function(button){
+
+            button.addEventListener(
+                "click",
+                function(){
+
+                    const target =
+                        button.dataset.close;
+
+                    sfx("close");
+
+                    document.getElementById(
+                        target
+                    ).style.display = "none";
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   CLICK OUTSIDE MODAL TO CLOSE
+========================================================= */
+
+[
+    "statusModal",
+    "namesModal",
+    "passModal",
+    "dossierModal",
+    "overviewModal"
+]
+.forEach(
+    function(id){
+
+        document.getElementById(id)
+            .addEventListener(
+                "click",
+                function(event){
+
+                    if(
+                        event.target ===
+                        document.getElementById(id)
+                    ){
+
+                        sfx("close");
+
+                        document.getElementById(
+                            id
+                        ).style.display = "none";
+
+                    }
+
+                }
+            );
+
+    }
+);
+
+
+/* =========================================================
+   ESCAPE TO CLOSE
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key !== "Escape"){
+            return;
+        }
+
+
+        [
+            "statusModal",
+            "namesModal",
+            "passModal",
+            "dossierModal",
+            "overviewModal"
+        ]
+        .forEach(
+            function(id){
+
+                const modal =
+                    document.getElementById(id);
+
+                if(
+                    modal.style.display === "flex"
+                ){
+
+                    modal.style.display =
+                        "none";
+
+                    sfx("close");
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   TERMINAL TYPING SOUND
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.target.tagName !== "INPUT" &&
+            event.key.length === 1
+        ){
+
+            sfx("type");
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   MATRIX BACKGROUND
+========================================================= */
+
+const canvas =
+    document.getElementById(
+        "matrix"
+    );
+
+const ctx =
+    canvas.getContext("2d");
+
+let drops = [];
+
+
+function resizeMatrix(){
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+    drops =
+        Array(
+            Math.ceil(
+                window.innerWidth / 16
+            )
+        ).fill(1);
+
+}
+
+
+function drawMatrix(){
+
+    ctx.fillStyle =
+        "rgba(2,8,5,.08)";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.fillStyle =
+        "#00ff66";
+
+    ctx.font =
+        "14px monospace";
+
+
+    drops.forEach(
+        function(y,index){
+
+            const character =
+                String.fromCharCode(
+                    0x30A0 +
+                    Math.random() * 96
+                );
+
+
+            ctx.fillText(
+                character,
+                index * 16,
+                y * 16
+            );
+
+
+            if(
+                y * 16 > canvas.height &&
+                Math.random() > .975
+            ){
+
+                drops[index] = 0;
+
+            }
+
+
+            drops[index]++;
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        drawMatrix
+    );
+
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeMatrix
+);
+
+
+resizeMatrix();
+
+drawMatrix();
+
+</script>
+
+</body>
+</html>
