@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANONYMOUS CYBER TERMINAL // DEAD COUNTER</title>
+
     <style>
         :root {
             --bg-color: #050508;
@@ -35,32 +37,38 @@
             position: relative;
         }
 
-        /* CRT Scanlines Effect */
         body::before {
             content: " ";
             display: block;
             position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background:
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             z-index: 10;
             background-size: 100% 3px, 3px 100%;
             pointer-events: none;
         }
 
-        /* Matrix Background Canvas */
         #matrixCanvas {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 1;
             opacity: 0.15;
         }
 
-        /* Modal Overlay for Welcome / Login */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.92);
             z-index: 100;
             display: flex;
@@ -82,8 +90,15 @@
         }
 
         @keyframes skullPulse {
-            0% { opacity: 0.08; transform: scale(0.98); }
-            100% { opacity: 0.16; transform: scale(1.02); }
+            0% {
+                opacity: 0.08;
+                transform: scale(0.98);
+            }
+
+            100% {
+                opacity: 0.16;
+                transform: scale(1.02);
+            }
         }
 
         .login-card {
@@ -163,14 +178,21 @@
             min-height: 24px;
         }
 
-        .accepted { color: var(--primary-green); }
-        .denied { color: var(--alert-red); }
+        .accepted {
+            color: var(--primary-green);
+        }
+
+        .denied {
+            color: var(--alert-red);
+        }
 
         #giantSkullScreen {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: #000;
             z-index: 200;
             justify-content: center;
@@ -186,11 +208,16 @@
         }
 
         @keyframes skullFlicker {
-            0% { opacity: 0.8; }
-            100% { opacity: 1; transform: scale(1.03); }
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.03);
+            }
         }
 
-        /* Terminal Window */
         .terminal-container {
             width: 90vw;
             height: 85vh;
@@ -238,10 +265,21 @@
             user-select: text;
         }
 
-        .system-text { color: #888; }
-        .accent-text { color: var(--accent-cyan); }
-        .success-text { color: var(--primary-green); }
-        .alert-text { color: var(--alert-red); }
+        .system-text {
+            color: #888;
+        }
+
+        .accent-text {
+            color: var(--accent-cyan);
+        }
+
+        .success-text {
+            color: var(--primary-green);
+        }
+
+        .alert-text {
+            color: var(--alert-red);
+        }
 
         .files-grid {
             display: flex;
@@ -309,7 +347,7 @@
 
         .quick-actions {
             padding: 10px 15px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
@@ -334,8 +372,10 @@
 
         .globe-panel {
             position: fixed;
-            top: 0; right: -340px;
-            width: 320px; height: 100vh;
+            top: 0;
+            right: -340px;
+            width: 320px;
+            height: 100vh;
             background: rgba(5, 10, 18, 0.95);
             backdrop-filter: blur(10px);
             border-left: 2px solid var(--primary-green);
@@ -347,38 +387,59 @@
             z-index: 150;
         }
 
-        .globe-panel.active { right: 0; }
+        .globe-panel.active {
+            right: 0;
+        }
 
         .close-btn {
             position: absolute;
-            top: 20px; right: 20px;
-            background: none; border: none;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
             color: var(--alert-red);
             font-size: 1.8rem;
             cursor: pointer;
         }
 
         .globe-container {
-            width: 170px; height: 170px;
+            width: 170px;
+            height: 170px;
             border-radius: 50%;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 10px -10px 25px rgba(0,0,0,0.9), 0 0 30px rgba(0, 255, 102, 0.5);
+            box-shadow: inset 10px -10px 25px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 255, 102, 0.5);
             background: #0284c7;
             margin-bottom: 24px;
         }
 
         .globe-map {
-            width: 200%; height: 100%;
+            width: 200%;
+            height: 100%;
             position: absolute;
-            background: repeating-linear-gradient(90deg, #15803d 0px, #15803d 40px, #0284c7 40px, #0284c7 90px, #166534 90px, #166534 140px, #0284c7 140px, #0284c7 180px);
+            background: repeating-linear-gradient(
+                90deg,
+                #15803d 0px,
+                #15803d 40px,
+                #0284c7 40px,
+                #0284c7 90px,
+                #166534 90px,
+                #166534 140px,
+                #0284c7 140px,
+                #0284c7 180px
+            );
             animation: spin 6s linear infinite;
             opacity: 0.85;
         }
 
         @keyframes spin {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
         }
 
         .globe-status {
@@ -392,7 +453,8 @@
 
         .status-popup {
             position: fixed;
-            top: 50%; left: 50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%) scale(0.8);
             background: rgba(5, 10, 18, 0.95);
             border: 2px solid var(--accent-cyan);
@@ -407,7 +469,8 @@
         }
 
         .status-popup.active {
-            opacity: 1; visibility: visible;
+            opacity: 1;
+            visibility: visible;
             transform: translate(-50%, -50%) scale(1);
         }
 
@@ -426,8 +489,10 @@
         .classified-modal {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: rgba(0, 0, 0, 0.85);
             z-index: 300;
             justify-content: center;
@@ -439,417 +504,4 @@
             border: 2px solid var(--alert-red);
             box-shadow: 0 0 25px var(--alert-red);
             padding: 25px 35px;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .classified-title {
-            color: var(--alert-red);
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        .details-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 350;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .details-box {
-            background: #050d18;
-            border: 2px solid var(--primary-green);
-            box-shadow: 0 0 30px var(--primary-green);
-            padding: 30px;
-            border-radius: 8px;
-            width: 380px;
-            text-align: left;
-        }
-
-        .details-header {
-            color: var(--accent-cyan);
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .overview-btn {
-            background: var(--primary-green);
-            color: #000;
-            font-family: var(--font-mono);
-            font-weight: bold;
-            padding: 8px 18px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
-        }
-
-        .profile-img {
-            max-width: 200px;
-            max-height: 200px;
-            border: 2px solid var(--primary-green);
-            margin-top: 15px;
-            display: none;
-            border-radius: 6px;
-            object-fit: cover;
-        }
-    </style>
-</head>
-<body>
-
-    <canvas id="matrixCanvas"></canvas>
-
-    <div class="modal-overlay" id="loginModal">
-        <div class="bg-skull">💀</div>
-        <div class="login-card">
-            <div class="welcome-title">WELCOME DEAD COUNTER</div>
-            <div class="welcome-sub">ANONYMOUS SECURE CYBER NODE v4.09</div>
-            <button class="login-btn" id="loginStartBtn" onclick="showPasswordStep()">LOGIN</button>
-            <div class="pass-input-group" id="passGroup">
-                <input type="password" id="passInput" class="pass-input" placeholder="PASSKEY" maxlength="8" autocomplete="off">
-            </div>
-            <div class="status-msg" id="statusMsg"></div>
-        </div>
-    </div>
-
-    <div id="giantSkullScreen">
-        <div class="flash-skull">💀</div>
-        <div style="color: #00ff66; font-size: 1.5rem; letter-spacing: 5px; margin-top: 20px;">SYSTEM OVERRIDDEN</div>
-    </div>
-
-    <div class="terminal-container" onclick="document.getElementById('termInput').focus();">
-        <div class="terminal-header">
-            <div class="terminal-title">
-                <span>[💀]</span>
-                <span>ANONYMOUS_CYBER_TERMINAL // USER: DEAD_COUNTER</span>
-            </div>
-        </div>
-
-        <div class="terminal-body" id="termBody">
-            <div class="output-line system-text">=====================================================================</div>
-            <div class="output-line accent-text">ANONYMOUS CYBER SYSTEM INITIALIZED. ACCESS GRANTED TO DEAD COUNTER.</div>
-            <div class="output-line alert-text">[SECURITY NOTICE]: YOU MUST RUN 'scan net' AND 'status' BEFORE ACCESSING 'names'.</div>
-            <div class="output-line system-text">Available commands: <span class="success-text">'names', 'scan net', 'status', 'clear'</span></div>
-            <div class="output-line system-text">=====================================================================</div>
-        </div>
-
-        <div class="quick-actions">
-            <button class="action-btn" onclick="execQuick('names')">names</button>
-            <button class="action-btn" onclick="execQuick('scan net')">scan net</button>
-            <button class="action-btn" onclick="execQuick('status')">status</button>
-            <button class="action-btn" onclick="execQuick('clear')">clear</button>
-        </div>
-
-        <div class="input-line" style="padding: 10px 20px; background: rgba(0,0,0,0.5);">
-            <span class="prompt">DEAD_COUNTER@ANON-NODE:~$</span>
-            <input type="text" id="termInput" class="term-input" autofocus autocomplete="off" spellcheck="false">
-        </div>
-    </div>
-
-    <div class="globe-panel" id="globePanel">
-        <button class="close-btn" id="closeGlobe">&times;</button>
-        <div class="globe-container">
-            <div class="globe-map"></div>
-        </div>
-        <div class="globe-status">NET IS PERFECT<br><span style="font-size: 0.9rem; color: var(--accent-cyan);">CONNECTED</span></div>
-    </div>
-
-    <div class="status-popup" id="statusPopup">
-        <div class="status-text" id="statusText">CHECKING...</div>
-    </div>
-
-    <div class="classified-modal" id="classifiedModal">
-        <div class="classified-box">
-            <div class="classified-title">CLASSIFIED !</div>
-            <div style="margin-bottom: 15px;">Passkey please:</div>
-            <input type="password" id="classifiedPassInput" class="pass-input" placeholder="@" style="width: 120px;" autocomplete="off">
-            <div style="margin-top: 15px;"><span style="color: #888; cursor: pointer;" onclick="closeClassifiedModal()">[CANCEL]</span></div>
-        </div>
-    </div>
-
-    <div class="details-modal" id="detailsModal">
-        <div class="details-box">
-            <div class="details-header" id="detailsHeader">SUSPECT DOSSIER</div>
-            <div id="detailsBody" style="line-height: 1.8; font-size: 1rem;"></div>
-            <button class="overview-btn" id="overviewBtn" onclick="showImageOverview()">OVERVIEW</button>
-            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture" onerror="handleImgError(this)"></center>
-            <div style="margin-top: 15px; text-align: center;"><span style="color: var(--alert-red); cursor: pointer;" onclick="closeDetailsModal()">[CLOSE DOSSIER]</span></div>
-        </div>
-    </div>
-
-    <script>
-        const PROFILES = {
-            'suspect 1': { name: 'Daham', age: '18', location: 'Seeduwa', img: 'Daham.jpg' },
-            'suspect 2': { name: 'Seneth', age: '18', location: 'Seeduwa', img: 'Seneth.jpg' },
-            'suspect 3': { name: 'Anuhas', age: '18', location: 'Seeduwa', img: 'Anuhas.jpg' },
-            'suspect 4': { name: 'Suran', age: '18', location: 'Bopitiya', img: 'Suran.jpg' }
-        };
-
-        /* State verification tracker */
-        const systemChecked = {
-            globe: false,
-            status: false
-        };
-
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; 
-        canvas.height = window.innerHeight;
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
-        const fontSize = 14; 
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = Array(columns).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(5, 5, 8, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff66';
-            ctx.font = fontSize + 'px monospace';
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars.charAt(Math.floor(Math.random() * chars.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 33);
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        const passInput = document.getElementById('passInput');
-        function showPasswordStep() {
-            document.getElementById('loginStartBtn').style.display = 'none';
-            document.getElementById('passGroup').style.display = 'flex';
-            passInput.focus();
-        }
-
-        passInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                if (passInput.value.replace(/\s+/g, '') === '1234') {
-                    document.getElementById('statusMsg').className = 'status-msg accepted';
-                    document.getElementById('statusMsg').innerText = 'ACCESS ACCEPTED';
-                    setTimeout(() => {
-                        document.getElementById('loginModal').style.display = 'none';
-                        document.getElementById('giantSkullScreen').style.display = 'flex';
-                        setTimeout(() => {
-                            document.getElementById('giantSkullScreen').style.display = 'none';
-                            document.getElementById('termInput').focus();
-                        }, 1800);
-                    }, 800);
-                } else {
-                    document.getElementById('statusMsg').className = 'status-msg denied';
-                    document.getElementById('statusMsg').innerText = 'ACCESS DENIED';
-                    passInput.value = '';
-                }
-            }
-        });
-
-        const termBody = document.getElementById('termBody');
-        const termInput = document.getElementById('termInput');
-        let selectedSuspectKey = null;
-        let globeTimeout = null;
-
-        termInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = termInput.value.trim();
-                if (cmd !== '') {
-                    processCommand(cmd);
-                }
-                termInput.value = '';
-            }
-        });
-
-        function processCommand(rawCmd) {
-            const cmd = rawCmd.trim().toLowerCase();
-            appendLine(`DEAD_COUNTER@ANON-NODE:~$ ${rawCmd}`, 'prompt');
-
-            if (cmd === 'clear') {
-                termBody.innerHTML = '';
-            } else if (cmd === 'scan net' || cmd === 'scan') {
-                systemChecked.globe = true;
-                openGlobeWithTimer();
-                appendLine('[+] GLOBE NETWORK CHECK COMPLETE.', 'success-text');
-            } else if (cmd === 'status') {
-                systemChecked.status = true;
-                showStatusPopup();
-                appendLine('[+] SYSTEM STATUS CHECK COMPLETE.', 'success-text');
-            } else if (cmd === 'names') {
-                if (isCheckComplete()) {
-                    renderWindowsFiles();
-                } else {
-                    denyAccessPrompt();
-                }
-            } else if (cmd in PROFILES) {
-                if (isCheckComplete()) {
-                    openPasskeyModal(cmd);
-                } else {
-                    denyAccessPrompt();
-                }
-            } else {
-                appendLine(`Command not recognized: '${rawCmd}'`, 'alert-text');
-            }
-        }
-
-        function isCheckComplete() {
-            return systemChecked.globe && systemChecked.status;
-        }
-
-        function denyAccessPrompt() {
-            let missing = [];
-            if (!systemChecked.globe) missing.push("'scan net'");
-            if (!systemChecked.status) missing.push("'status'");
-
-            appendLine(`[ACCESS DENIED] Server check incomplete!`, 'alert-text');
-            appendLine(`Required verification step(s) remaining: ${missing.join(' and ')}`, 'accent-text');
-        }
-
-        function execQuick(cmd) {
-            processCommand(cmd);
-            termInput.focus();
-        }
-
-        function renderWindowsFiles() {
-            const filesHtml = `
-                <div class="output-line alert-text" style="font-weight: bold;">[!] SUSPECT DIRECTORY ACCESS GRANTED [!]</div>
-                <div class="files-grid">
-                    <div class="file-card" onclick="handleFileClick('suspect 1')">
-                        <div class="file-icon">📁</div>
-                        <div class="file-name">Suspect 1</div>
-                    </div>
-                    <div class="file-card" onclick="handleFileClick('suspect 2')">
-                        <div class="file-icon">📁</div>
-                        <div class="file-name">Suspect 2</div>
-                    </div>
-                    <div class="file-card" onclick="handleFileClick('suspect 3')">
-                        <div class="file-icon">📁</div>
-                        <div class="file-name">Suspect 3</div>
-                    </div>
-                    <div class="file-card" onclick="handleFileClick('suspect 4')">
-                        <div class="file-icon">📁</div>
-                        <div class="file-name">Suspect 4</div>
-                    </div>
-                </div>
-            `;
-            appendLine(filesHtml, 'system-text');
-        }
-
-        function handleFileClick(key) {
-            if (isCheckComplete()) {
-                openPasskeyModal(key);
-            } else {
-                denyAccessPrompt();
-            }
-        }
-
-        function openGlobeWithTimer() {
-            const panel = document.getElementById('globePanel');
-            panel.classList.add('active');
-            
-            if (globeTimeout) clearTimeout(globeTimeout);
-            
-            globeTimeout = setTimeout(() => {
-                panel.classList.remove('active');
-            }, 5000);
-        }
-
-        document.getElementById('closeGlobe').onclick = () => {
-            document.getElementById('globePanel').classList.remove('active');
-            if (globeTimeout) clearTimeout(globeTimeout);
-        };
-
-        function showStatusPopup() {
-            const popup = document.getElementById('statusPopup');
-            const txt = document.getElementById('statusText');
-            txt.textContent = 'CHECKING...';
-            txt.classList.remove('connected');
-            popup.classList.add('active');
-            setTimeout(() => {
-                txt.textContent = 'CONNECTED';
-                txt.classList.add('connected');
-                setTimeout(() => { popup.classList.remove('active'); }, 1800);
-            }, 1500);
-        }
-
-        const classifiedModal = document.getElementById('classifiedModal');
-        const classifiedPassInput = document.getElementById('classifiedPassInput');
-
-        function openPasskeyModal(key) {
-            selectedSuspectKey = key;
-            classifiedModal.style.display = 'flex';
-            classifiedPassInput.value = '';
-            classifiedPassInput.focus();
-        }
-
-        classifiedPassInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                if (classifiedPassInput.value === '@') {
-                    closeClassifiedModal();
-                    openDetailsModal(selectedSuspectKey);
-                } else {
-                    alert('ACCESS DENIED: Incorrect Passkey!');
-                    classifiedPassInput.value = '';
-                }
-            }
-        });
-
-        function closeClassifiedModal() {
-            classifiedModal.style.display = 'none';
-        }
-
-        const detailsModal = document.getElementById('detailsModal');
-        const detailsHeader = document.getElementById('detailsHeader');
-        const detailsBody = document.getElementById('detailsBody');
-        const targetProfileImg = document.getElementById('targetProfileImg');
-
-        function openDetailsModal(key) {
-            const data = PROFILES[key];
-            detailsHeader.innerText = `${key.toUpperCase()} - RESTRICTED FILE`;
-            detailsBody.innerHTML = `
-                <span class="accent-text">NAME:</span> ${data.name}<br>
-                <span class="accent-text">AGE:</span> ${data.age}<br>
-                <span class="accent-text">HOUSE LOCATION:</span> ${data.location}
-            `;
-            targetProfileImg.src = data.img;
-            targetProfileImg.style.display = 'none';
-            detailsModal.style.display = 'flex';
-        }
-
-        function showImageOverview() {
-            targetProfileImg.style.display = 'block';
-        }
-
-        function closeDetailsModal() {
-            detailsModal.style.display = 'none';
-            targetProfileImg.style.display = 'none';
-        }
-
-        function handleImgError(img) {
-            img.onerror = null;
-            img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23050d18"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%2300ff66" font-family="monospace" font-size="14">[NO IMAGE FOUND]</text></svg>';
-        }
-
-        function appendLine(text, className = '') {
-            const line = document.createElement('div');
-            line.className = `output-line ${className}`;
-            line.innerHTML = text;
-            termBody.appendChild(line);
-            termBody.scrollTop = termBody.scrollHeight;
-        }
-    </script>
-</body>
-</html>
+            border-radius:
