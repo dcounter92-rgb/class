@@ -245,10 +245,46 @@
         .success-text { color: var(--primary-green); }
         .alert-text { color: var(--alert-red); }
 
-        .clickable-file {
-            color: var(--accent-cyan);
+        /* Windows File Explorer System Styles */
+        .files-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .file-card {
+            background: rgba(0, 255, 102, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            text-decoration: underline;
+            transition: all 0.2s ease;
+        }
+
+        .file-card:hover {
+            background: rgba(0, 255, 102, 0.2);
+            border-color: var(--primary-green);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+        }
+
+        .file-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-align: center;
+            font-weight: bold;
         }
 
         .input-line {
@@ -355,6 +391,7 @@
             color: var(--primary-green);
             letter-spacing: 2px;
             text-shadow: 0 0 10px var(--primary-green);
+            text-align: center;
         }
 
         /* Status Command Pop-up */
@@ -422,6 +459,37 @@
             letter-spacing: 2px;
         }
 
+        /* Details Tab Modal */
+        .details-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 350;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .details-box {
+            background: #050d18;
+            border: 2px solid var(--primary-green);
+            box-shadow: 0 0 30px var(--primary-green);
+            padding: 30px;
+            border-radius: 8px;
+            width: 380px;
+            text-align: left;
+        }
+
+        .details-header {
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
         .overview-btn {
             background: var(--primary-green);
             color: #000;
@@ -432,6 +500,7 @@
             border-radius: 4px;
             cursor: pointer;
             margin-top: 15px;
+            width: 100%;
         }
 
         .profile-img {
@@ -504,7 +573,7 @@
         <div class="globe-container">
             <div class="globe-map"></div>
         </div>
-        <div class="globe-status">NET IS PERFECT</div>
+        <div class="globe-status">NET IS PERFECT<br><span style="font-size: 0.9rem; color: var(--accent-cyan);">CONNECTED</span></div>
     </div>
 
     <!-- Status Command Popup -->
@@ -512,28 +581,34 @@
         <div class="status-text" id="statusText">CHECKING...</div>
     </div>
 
-    <!-- Classified Modal Popup -->
+    <!-- Classified Passkey Modal -->
     <div class="classified-modal" id="classifiedModal">
-        <div class="classified-box" id="classifiedBox">
+        <div class="classified-box">
             <div class="classified-title">CLASSIFIED !</div>
-            <div id="passPromptSection">
-                <div style="margin-bottom: 15px;">Passkey please:</div>
-                <input type="password" id="classifiedPassInput" class="pass-input" placeholder="@" style="width: 120px;" autocomplete="off">
-            </div>
-            <div id="classifiedContent" style="display: none; margin-top: 15px; text-align: left;"></div>
-            <button class="overview-btn" id="overviewBtn" style="display: none;" onclick="showImageOverview()">OVERVIEW</button>
-            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture" onerror="this.style.display='none'; alert('Profile image not found.');"></center>
-            <div style="margin-top: 15px;"><span class="clickable-file" onclick="closeClassifiedModal()">[CLOSE]</span></div>
+            <div style="margin-bottom: 15px;">Passkey please:</div>
+            <input type="password" id="classifiedPassInput" class="pass-input" placeholder="@" style="width: 120px;" autocomplete="off">
+            <div style="margin-top: 15px;"><span style="color: #888; cursor: pointer;" onclick="closeClassifiedModal()">[CANCEL]</span></div>
+        </div>
+    </div>
+
+    <!-- Separate Details Tab Modal -->
+    <div class="details-modal" id="detailsModal">
+        <div class="details-box">
+            <div class="details-header" id="detailsHeader">SUSPECT DOSSIER</div>
+            <div id="detailsBody" style="line-height: 1.8; font-size: 1rem;"></div>
+            <button class="overview-btn" id="overviewBtn" onclick="showImageOverview()">OVERVIEW</button>
+            <center><img id="targetProfileImg" class="profile-img" src="" alt="Profile Picture"></center>
+            <div style="margin-top: 15px; text-align: center;"><span style="color: var(--alert-red); cursor: pointer;" onclick="closeDetailsModal()">[CLOSE DOSSIER]</span></div>
         </div>
     </div>
 
     <script>
-        /* Database Profiles */
+        /* Database Profiles - Updated Locations and Ages */
         const PROFILES = {
-            'daham': { name: 'Daham', age: '18', location: 'Ja-Ela', img: 'daham.jpg' },
-            'seneth': { name: 'Seneth', age: '19', location: 'Colombo', img: 'seneth.jpg' },
-            'anuhas': { name: 'Anuhas', age: '18', location: 'Gampaha', img: 'anuhas.jpg' },
-            'suran': { name: 'Suran', age: '20', location: 'Negombo', img: 'suran.jpg' }
+            'suspect 1': { name: 'Daham', age: '18', location: 'Seeduwa', img: 'daham.jpg' },
+            'suspect 2': { name: 'Seneth', age: '18', location: 'Seeduwa', img: 'seneth.jpg' },
+            'suspect 3': { name: 'Anuhas', age: '18', location: 'Seeduwa', img: 'anuhas.jpg' },
+            'suspect 4': { name: 'Suran', age: '18', location: 'Bopitiya', img: 'suran.jpg' }
         };
 
         /* Matrix Background */
@@ -557,11 +632,6 @@
             }
         }
         setInterval(drawMatrix, 33);
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
 
         /* Login Verification */
         const passInput = document.getElementById('passInput');
@@ -595,7 +665,8 @@
         /* Terminal System */
         const termBody = document.getElementById('termBody');
         const termInput = document.getElementById('termInput');
-        let selectedTargetKey = null;
+        let selectedSuspectKey = null;
+        let globeTimeout = null;
 
         termInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -607,28 +678,60 @@
                     termBody.innerHTML = '';
                     return;
                 } else if (cmd === 'names') {
-                    appendLine(`<span class="alert-text" style="font-size: 1.1rem; font-weight: bold;">[!] WANTED LIST [!]</span><br>` +
-                        `----------------------------------------<br>` +
-                        `<span class="accent-text">FILE #01:</span> <span class="clickable-file" onclick="openProfileModal('daham')">Daham</span><br>` +
-                        `<span class="accent-text">FILE #02:</span> <span class="clickable-file" onclick="openProfileModal('seneth')">Seneth</span><br>` +
-                        `<span class="accent-text">FILE #03:</span> <span class="clickable-file" onclick="openProfileModal('anuhas')">Anuhas</span><br>` +
-                        `<span class="accent-text">FILE #04:</span> <span class="clickable-file" onclick="openProfileModal('suran')">Suran</span><br>` +
-                        `----------------------------------------`, 'success-text');
+                    renderWindowsFiles();
                 } else if (cmd in PROFILES) {
-                    openProfileModal(cmd);
+                    openPasskeyModal(cmd);
                 } else if (cmd === 'scan net' || cmd === 'scan') {
-                    document.getElementById('globePanel').classList.add('active');
+                    openGlobeWithTimer();
                 } else if (cmd === 'status') {
                     showStatusPopup();
-                } else if (cmd !== '') {
+                } else {
                     appendLine(`Command not recognized: '${cmd}'`, 'alert-text');
                 }
             }
         });
 
+        /* Render Windows Explorer Style File Grid */
+        function renderWindowsFiles() {
+            const filesHtml = `
+                <div class="output-line alert-text" style="font-weight: bold;">[!] SUSPECT DIRECTORY ACCESS GRANTED [!]</div>
+                <div class="files-grid">
+                    <div class="file-card" onclick="openPasskeyModal('suspect 1')">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Suspect 1</div>
+                    </div>
+                    <div class="file-card" onclick="openPasskeyModal('suspect 2')">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Suspect 2</div>
+                    </div>
+                    <div class="file-card" onclick="openPasskeyModal('suspect 3')">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Suspect 3</div>
+                    </div>
+                    <div class="file-card" onclick="openPasskeyModal('suspect 4')">
+                        <div class="file-icon">📁</div>
+                        <div class="file-name">Suspect 4</div>
+                    </div>
+                </div>
+            `;
+            appendLine(filesHtml, 'system-text');
+        }
+
+        /* Scan Net Globe Functionality with Auto-Disappear in 5 Seconds */
+        function openGlobeWithTimer() {
+            const panel = document.getElementById('globePanel');
+            panel.classList.add('active');
+            
+            if (globeTimeout) clearTimeout(globeTimeout);
+            
+            globeTimeout = setTimeout(() => {
+                panel.classList.remove('active');
+            }, 5000);
+        }
+
         document.getElementById('closeGlobe').onclick = () => {
             document.getElementById('globePanel').classList.remove('active');
-            termInput.focus();
+            if (globeTimeout) clearTimeout(globeTimeout);
         };
 
         function showStatusPopup() {
@@ -640,57 +743,62 @@
             setTimeout(() => {
                 txt.textContent = 'CONNECTED';
                 txt.classList.add('connected');
-                setTimeout(() => { 
-                    popup.classList.remove('active'); 
-                    termInput.focus();
-                }, 1800);
+                setTimeout(() => { popup.classList.remove('active'); }, 1800);
             }, 1500);
         }
 
-        /* Classified Modal Handling */
+        /* Passkey Security Step */
         const classifiedModal = document.getElementById('classifiedModal');
         const classifiedPassInput = document.getElementById('classifiedPassInput');
-        const classifiedContent = document.getElementById('classifiedContent');
-        const passPromptSection = document.getElementById('passPromptSection');
-        const overviewBtn = document.getElementById('overviewBtn');
-        const targetProfileImg = document.getElementById('targetProfileImg');
 
-        function openProfileModal(key) {
-            selectedTargetKey = key;
+        function openPasskeyModal(key) {
+            selectedSuspectKey = key;
             classifiedModal.style.display = 'flex';
             classifiedPassInput.value = '';
-            passPromptSection.style.display = 'block';
-            classifiedContent.style.display = 'none';
-            overviewBtn.style.display = 'none';
-            targetProfileImg.style.display = 'none';
             classifiedPassInput.focus();
         }
 
         classifiedPassInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (classifiedPassInput.value === '@') {
-                    const data = PROFILES[selectedTargetKey];
-                    passPromptSection.style.display = 'none';
-                    classifiedContent.innerHTML = `<span class="accent-text">NAME:</span> ${data.name}<br>` +
-                                                 `<span class="accent-text">AGE:</span> ${data.age}<br>` +
-                                                 `<span class="accent-text">LOCATION:</span> ${data.location}`;
-                    classifiedContent.style.display = 'block';
-                    overviewBtn.style.display = 'inline-block';
-                    targetProfileImg.src = data.img;
+                    closeClassifiedModal();
+                    openDetailsModal(selectedSuspectKey);
                 } else {
-                    alert('ACCESS DENIED: Invalid Passkey!');
+                    alert('ACCESS DENIED: Incorrect Passkey!');
                     classifiedPassInput.value = '';
                 }
             }
         });
 
+        function closeClassifiedModal() {
+            classifiedModal.style.display = 'none';
+        }
+
+        /* Individual Profile Details Tab */
+        const detailsModal = document.getElementById('detailsModal');
+        const detailsHeader = document.getElementById('detailsHeader');
+        const detailsBody = document.getElementById('detailsBody');
+        const targetProfileImg = document.getElementById('targetProfileImg');
+
+        function openDetailsModal(key) {
+            const data = PROFILES[key];
+            detailsHeader.innerText = `${key.toUpperCase()} - RESTRICTED FILE`;
+            detailsBody.innerHTML = `
+                <span class="accent-text">NAME:</span> ${data.name}<br>
+                <span class="accent-text">AGE:</span> ${data.age}<br>
+                <span class="accent-text">HOUSE LOCATION:</span> ${data.location}
+            `;
+            targetProfileImg.src = data.img;
+            targetProfileImg.style.display = 'none';
+            detailsModal.style.display = 'flex';
+        }
+
         function showImageOverview() {
             targetProfileImg.style.display = 'block';
         }
 
-        function closeClassifiedModal() {
-            classifiedModal.style.display = 'none';
-            termInput.focus();
+        function closeDetailsModal() {
+            detailsModal.style.display = 'none';
         }
 
         function appendLine(text, className = '') {
